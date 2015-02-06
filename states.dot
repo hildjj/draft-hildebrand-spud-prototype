@@ -1,0 +1,23 @@
+# close, open, ack, data
+# close always drops state!
+# policy choices yet to be made
+digraph states {
+  margin=10
+  unknown -> opening [label=open];
+  unknown -> unknown [label="close"];
+  unknown -> resuming [label="data,ack"]
+
+  opening -> running [label=ack];
+  opening -> unknown [label=close];
+  opening -> resuming [label=data];
+  opening -> opening [label=open];
+
+  running -> running [label="data,ack,open"];
+  running -> unknown [label=close];
+
+  resuming -> opening [label=open];
+  resuming -> unknown [label=close];
+  resuming -> running [label=ack];
+  resuming -> resuming [label=data];
+
+}

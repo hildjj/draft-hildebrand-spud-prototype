@@ -1,0 +1,7 @@
+32 magic
+32 session1
+28 session2
+2 command
+1 adec
+1 pdec
+* transport (e.g CBOR + frags)

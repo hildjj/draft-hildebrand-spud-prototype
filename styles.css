@@ -1,0 +1,41 @@
+
+body {
+    font-family: sans-serif;
+}
+table.pdu {
+  border-collapse: collapse;
+  text-align: center;
+}
+table.pdu th {
+  border: solid thin;
+  text-align: center;
+  background-color: #ccc;
+}
+table.pdu td {
+  border: solid thin;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+table.pdu th, table.pdu td {
+    padding: 0.2em;
+}
+table.pdu th {
+    text-align: right;
+    padding-right: 5px;
+    font-family: 'Lucida Console', Monaco, monospace;
+    font-size: 80%;
+}
+table.pdu thead tr:nth-child(1) th:nth-child(2), table.pdu thead tr:nth-child(2) th:nth-child(1), table.pdu thead tr:nth-child(2) th:nth-child(2) {
+    text-align: center;
+    font-family: sans-serif;
+    background-color: rgba(0, 0, 0, 0.05);
+    font-size: 95%;
+}
+table.pdu thead tr:first-child th:first-child {
+  /* upper left corner */
+    font-family: sans-serif;
+    font-style: italic;
+    font-weight: normal;
+    background-color: #fff;
+    border: none;
+}
