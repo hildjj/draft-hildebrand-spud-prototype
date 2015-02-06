@@ -6,7 +6,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/jhildebr/draft-hildebrand-spud-prototype.git"
+    "url": "https://github.com/hildjj/draft-hildebrand-spud-prototype.git"
   },
   "devDependencies": {
     "grunt": "^0.4.4",
