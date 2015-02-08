@@ -42,8 +42,10 @@ and "OPTIONAL" are to be interpreted as described in BCP 14, RFC 2119
 
 # Requirements
 
-* Deploy: existing Internet/kernels
-* user space, not root
+* Deploy on existing Internet
+* No kernel modifications required
+* No root permissions required
+* Only widely-available APIs required
 * Choices for congestion, retransmit, etc.
 * Single firewall-traversal mechanism, multiple transport semantics
 * Multiple interfaces for each endpoint
@@ -53,6 +55,30 @@ and "OPTIONAL" are to be interpreted as described in BCP 14, RFC 2119
 # Lifetime of a session
 
 
+    +--------------------+ +-----+
+    |                    | |close|
+    |                    | |     |
+    |                    v |     v
+    |      +-----open--- +-------+ <--close----+
+    |      |             |unknown|             |
+    |      |    +------> +-------+ --ack,-+    |
+    |      |    |                    data |    |
+    |      |  close                       |    |
+    |      v    |                         v    |
+    |     +-------+ -------data-------> +--------+
+    | +---|opening|                     |resuming|---+
+    | |   +-------+ <------open-------- +--------+   |
+    | |     ^   |                         |    ^     |
+    | |     |   |                         |    |     |
+    | |     |   |                         |    |     |
+    | +open-+   +-ack--> +-------+ <--ack-+    +-data+
+    |                    |running|
+    +-------close------- +-------+
+                          ^    |
+                          |    |
+                          |    | open,ack,data
+                          +----+
+{: #states title="State transitions"}
 
 # Packet layout
 
