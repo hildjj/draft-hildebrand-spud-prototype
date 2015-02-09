@@ -2,7 +2,7 @@
 title: Session Protocol for User Datagrams (SPUD) Prototype
 abbrev: I-D
 docname: draft-hildebrand-spud-prototype-00
-date: 2015-2-5
+date: 2015-2-9
 category: info
 ipr: trust200902
 
@@ -468,7 +468,7 @@ requirements about what can be exposed, how it can be exposed, etc.  This
 prototype DOES NOT tackle these issues yet.
 
 The goal is to ensure that this layer is better than TCP from a
-security perspective.  The prototype is clearly not yet to that point. 
+security perspective.  The prototype is clearly not yet to that point.
 
 # IANA Considerations
 

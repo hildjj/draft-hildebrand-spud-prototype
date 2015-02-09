@@ -30,7 +30,7 @@
       </address>
     </author>
 
-    <date year="2015" month="February" day="05"/>
+    <date year="2015" month="February" day="09"/>
 
     
     
@@ -524,7 +524,7 @@ requirements about what can be exposed, how it can be exposed, etc.  This
 prototype DOES NOT tackle these issues yet.</t>
 
 <t>The goal is to ensure that this layer is better than TCP from a
-security perspective.  The prototype is clearly not yet to that point. </t>
+security perspective.  The prototype is clearly not yet to that point.</t>
 
 </section>
 <section anchor="iana-considerations" title="IANA Considerations">

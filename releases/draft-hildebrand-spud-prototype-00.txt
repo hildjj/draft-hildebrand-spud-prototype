@@ -5,8 +5,8 @@
 Network Working Group                                      J. Hildebrand
 Internet-Draft                                             Cisco Systems
 Intended status: Informational                               B. Trammell
-Expires: August 9, 2015                                       ETH Zurich
-                                                       February 05, 2015
+Expires: August 13, 2015                                      ETH Zurich
+                                                       February 09, 2015
 
 
           Session Protocol for User Datagrams (SPUD) Prototype
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on August 9, 2015.
+   This Internet-Draft will expire on August 13, 2015.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                 [Page 1]
+Hildebrand & Trammell    Expires August 13, 2015                [Page 1]
 
 Internet-Draft                     I-D                     February 2015
 
@@ -109,7 +109,7 @@ Internet-Draft                     I-D                     February 2015
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                 [Page 2]
+Hildebrand & Trammell    Expires August 13, 2015                [Page 2]
 
 Internet-Draft                     I-D                     February 2015
 
@@ -165,7 +165,7 @@ Internet-Draft                     I-D                     February 2015
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                 [Page 3]
+Hildebrand & Trammell    Expires August 13, 2015                [Page 3]
 
 Internet-Draft                     I-D                     February 2015
 
@@ -221,7 +221,7 @@ Internet-Draft                     I-D                     February 2015
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                 [Page 4]
+Hildebrand & Trammell    Expires August 13, 2015                [Page 4]
 
 Internet-Draft                     I-D                     February 2015
 
@@ -277,7 +277,7 @@ Internet-Draft                     I-D                     February 2015
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                 [Page 5]
+Hildebrand & Trammell    Expires August 13, 2015                [Page 5]
 
 Internet-Draft                     I-D                     February 2015
 
@@ -333,7 +333,7 @@ Internet-Draft                     I-D                     February 2015
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                 [Page 6]
+Hildebrand & Trammell    Expires August 13, 2015                [Page 6]
 
 Internet-Draft                     I-D                     February 2015
 
@@ -389,7 +389,7 @@ Internet-Draft                     I-D                     February 2015
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                 [Page 7]
+Hildebrand & Trammell    Expires August 13, 2015                [Page 7]
 
 Internet-Draft                     I-D                     February 2015
 
@@ -445,7 +445,7 @@ Internet-Draft                     I-D                     February 2015
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                 [Page 8]
+Hildebrand & Trammell    Expires August 13, 2015                [Page 8]
 
 Internet-Draft                     I-D                     February 2015
 
@@ -501,7 +501,7 @@ Internet-Draft                     I-D                     February 2015
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                 [Page 9]
+Hildebrand & Trammell    Expires August 13, 2015                [Page 9]
 
 Internet-Draft                     I-D                     February 2015
 
@@ -557,7 +557,7 @@ Internet-Draft                     I-D                     February 2015
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                [Page 10]
+Hildebrand & Trammell    Expires August 13, 2015               [Page 10]
 
 Internet-Draft                     I-D                     February 2015
 
@@ -613,7 +613,7 @@ Internet-Draft                     I-D                     February 2015
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                [Page 11]
+Hildebrand & Trammell    Expires August 13, 2015               [Page 11]
 
 Internet-Draft                     I-D                     February 2015
 
@@ -669,4 +669,4 @@ Authors' Addresses
 
 
 
-Hildebrand & Trammell    Expires August 9, 2015                [Page 12]
+Hildebrand & Trammell    Expires August 13, 2015               [Page 12]
