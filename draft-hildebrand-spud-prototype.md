@@ -79,12 +79,19 @@ with the "responder".  A session may be closed by either endpoint.
 
 A session may be in one of the following states:
 
-* unknown: no information is currently known about the session.  All sessions
+unknown
+: no information is currently known about the session.  All sessions
   implicitly start in the unknown state.
-* opening: the initiator has requested a session that the responder has not yet
+
+opening
+: the initiator has requested a session that the responder has not yet
   acknowledged.
-* running: the session is set up and will allow data to flow
-* resuming: an out-of-sequence SPUD packet has been received for this session.
+
+running
+: the session is set up and will allow data to flow
+
+resuming
+: an out-of-sequence SPUD packet has been received for this session.
   Policy will need to be developed describing how (or if) this state can be
   exploited for quicker session resumption by higher-level protocols.
 
@@ -127,7 +134,7 @@ the UDP header.
     +-+-+-+-+                                                       +
     |                                                               |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                              ...                              |
+    |                           CBOR Map                            |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 {: #packet title="SPUD packets"}
 
@@ -157,10 +164,17 @@ that SPUD is not in use on packets that do not include the magic number.
 
 The next 2 bits of a SPUD packet encode a command:
 
-* Data(00): Normal data in a running session
-* Open(01): A request to begin a session
-* Close(10): A request to end a session
-* Ack(11): An acknowledgement to an open request
+Data (00)
+: Normal data in a running session
+
+Open (01)
+: A request to begin a session
+
+Close (10)
+: A request to end a session
+
+Ack (11)
+: An acknowledgement to an open request
 
 ## Declaration bits
 
@@ -169,20 +183,64 @@ The pdec bit is set when the path is making a declaration to the application.
 
 ## Additional information
 
-If any of the command, adec, or pdec bits are set, the following data in the
-packet is a CBOR map (major type 5).  No fragmentation mechanism is specified yet,
-but one is likely needed later.
+The information after the SPUD header is a CBOR {{RFC7049}} map (major type 5).
+Each key in the map may be an integer (major type 0 or 1) or a text string
+(major type 3).  Integer keys are reserved for standardized protocols, with a
+registry defining their meaning.  This convention can save several bytes per
+packet, since small integers only take a single byte in the CBOR encoding, and
+a single-character string takes at least two bytes (more when useful-length
+strings are used).
 
-For Data-command SPUD packets with neither the adec nor the pdec bits set, the
-additional information can be any data that the upper-layer protocol desires.
+The only integer keys reserved by this version of the document are:
+
+0 (anything)
+: Application Data. Any CBOR data type, used as application-specific data.
+  Often this will be a byte string (major type 2), particularly for protocols
+  that encrypt data.
+
+The overhead for always using CBOR is therefore effectively three or more bytes
+0xA1 (map with one element), 0x00 (integer 0 as the key), and 0x41 (byte string
+containing one byte).  [EDITOR'S NOTE: It may be that the simplicity and
+extensisbility of this approach is worth the three bytes of overhead.]  
 
 # Initiating a session
 
-CBOR
+To begin a session, the initiator sends a SPUD packet with the "open" command
+(bits 01).  
+
+Future versions of this specification may contain CBOR requesting proof of
+implementation from the receiving endpoint.
+
+# Acknowledging session creation
+
+To acknowledge the creation of a session, the responder sends a SPUD packet with
+the "ack" command (bits 11).  The current thought is that the security provided
+by the TCP three-way handshake would be left to transport protocols inside of
+SPUD.  Further exploration of this prototype will help decide how much of this
+handshake needs to be made visible to path elements that *only* process SPUD.
 
 # Closing a session
 
-CBOR
+To close a session, either side sends a packet with the "close" command (bits
+10).  Whenever a path element sees a close packet for a session, it MAY drop
+all stored state for that session.  Further exploration of this prototype will
+determine when close packets are sent, what CBOR they contain, and how they
+interact with transport protocols inside of SPUD.
+
+What is likely at this time is that SPUD close packets MAY contain error
+information in the following CBOR keys (and associated values):
+
+"error" (map, major type 5)
+: a map from text string (major type 3) to text string.  The keys are
+  {{RFC5646}} language tags, and the values are strings that can be presented to
+  a user that understands that language.  The key "*" can be used as the
+  default.
+
+"url" (text string, major type 3)
+: a URL identifying some information about the path or its relationship with
+  the session. The URL represents some path condition, and retrieval of
+  content at the URL should include a human-readable description.
+
 
 # Path declarations
 
@@ -200,27 +258,36 @@ sending SPUD packets with the source IP address and UDP port from the other
 endpoint in the conversation.  These "spoofed" packets  are required to allow
 existing network elements that pass traffic for a given 5-tuple to continue to
 work.  To ensure that the context for these declarations is correct, path
-declaration packets MUST have the pdec bit set.
+declaration packets MUST have the pdec bit set.  Path declarations MUST use the
+"data" command (bits 00).
 
-The data associated with a path declaration consists of a CBOR {{RFC7049}} map
-(major type 5), which may always have the following keys (and associated
-values):
+Path declarations do not imply specific required actions on the part of
+receivers.  Any path declaration MAY be ignored by a receiving application.
+When using a path declaration as input to an algorithm, the application will
+make decisions about the trustworthiness of the declaration before using the
+data in the declaration.
 
-* ipaddr (byte string, major type 2): the IPv4 address or IPv6 address of the
-  sender, as an string of 4 or 16 bytes in network order. This is necessary as
-  the source IP address of the packet is spoofed
-* ttl (unisigned integer, major type 0): IP time to live / IPv6 Hop Limit of
-  associated device
-* cookie (byte string, major type 2): data that identifies the sending path
-  element unambiguously
-* url (text string, major type 3): a URL identifying some information about the
-  path or its relationship with the session. The URL represents some path
-  condition, and retrieval of content at the URL should include a human-readable
-  description.
-* warning (map, major type 5): a map from text string (major type 3) to text
-  string.  The keys are {{RFC5646}} language tags, and the values are strings
-  that can be presented to a user that understands that language.  The key "*"
-  can be used as the default.
+The data associated with a path declaration may always have the following keys
+(and associated values), regardless of what other information is included:
+
+"ipaddr" (byte string, major type 2)
+: the IPv4 address or IPv6 address of the sender, as an string of 4 or 16 bytes
+  in network order. This is necessary as the source IP address of the packet is
+  spoofed
+
+"cookie" (byte string, major type 2)
+: data that identifies the sending path element unambiguously
+
+"url" (text string, major type 3)
+: a URL identifying some information about the path or its relationship with
+  the session. The URL represents some path condition, and retrieval of
+  content at the URL should include a human-readable description.
+
+"warning" (map, major type 5)
+: a map from text string (major type 3) to text string.  The keys are
+  {{RFC5646}} language tags, and the values are strings that can be presented to
+  a user that understands that language.  The key "*" can be used as the
+  default.
 
 ## Path Declaration Vocabulary
 
@@ -243,13 +310,17 @@ ICMP messages are not  made available to applications through portable socket
 interfaces.  As such, a path element might decide to copy the ICMP message
 into a path declaration, using the following key/value pairs:
 
-* icmp (byte string, major type 2): the full ICMP  (e.g.) payload.
-  This is  intended to allow ICMP messages (which may be blocked by the path, or
-  not made  available to the receiving application) to be bound to a session.
-  Note that  sending a path declaration ICMP message is not a substitute for
-  sending a  required ICMP or ICMPv6 message.
-* icmp-type (unsigned, major type 0): the ICMP type
-* icmp-code (unsigned, major type 0): the ICMP code
+"icmp" (byte string, major type 2)
+: the full ICMP payload. This is  intended to allow ICMP messages (which may be
+  blocked by the path, or not made available to the receiving application) to be
+  bound to a session. Note that sending a path declaration ICMP message is not a
+  substitute for sending a required ICMP or ICMPv6 message.
+
+"icmp-type" (unsigned, major type 0)
+: the ICMP type
+
+"icmp-code" (unsigned, major type 0)
+: the ICMP code
 
 Other information from particular ICMP codes may be parsed out into key/value
 pairs.
@@ -260,20 +331,33 @@ Similar to ICMP, getting explicit access to ECN {{RFC3168}} information in
 applications can be difficult.  As such, a path element might decide to generate
 a path declaration using the following key/value pairs:
 
-* ecn (True, major type 7): congestion has been detected
+"ecn" (True, major type 7)
+: congestion has been detected
 
-[EDITOR'S NOTE (bht): we probably want to track current proposals to improve ECN resolution. DCTCP uses higher marking rate and lower response rate to get high resolution marking; we have ints, which are much more powerful. The main problem in my mind is figuring out a marking scheme that the midpoint can trivially measure and the endpoint can always correctly react to. Talk to Mirja Kuehlewind, she's spent a lot of time thinking about this...]
+[EDITOR'S NOTE: we will track current proposals to improve ECN resolution here.
+DCTCP uses higher marking rate and lower response rate to get high resolution
+marking; we have ints, which are much more powerful, if we can find an algorithm
+simple enough for path elements to use.]
 
 ### Path element identity
 
 Path elements can describe themselves using the following key/value pairs:
 
-* description (text string, major type 3): the name of the software, hardware,
-  product, etc. that generated the declaration
-* version (text string, major type 3): the version of the software, hardware,
-  prodct, etc. that generated the declaration
-* caps (byte string, major type 2): a hash of the capabilities of the software,
-  hardware, prodct, etc. that generated the declaration [TO BE DESCRIBED]
+"description" (text string, major type 3)
+: the name of the software, hardware, product, etc. that generated the
+  declaration
+
+"version" (text string, major type 3)
+: the version of the software, hardware, product, etc. that generated the
+  declaration
+
+"caps" (byte string, major type 2)
+: a hash of the capabilities of the software, hardware, product, etc. that
+  generated the declaration [TO BE DESCRIBED]
+
+"ttl" (unisigned integer, major type 0)
+: IP time to live / IPv6 Hop Limit of associated device [EDITOR'S NOTE: more
+  detail is required on how this is calculated]
 
 ### Maximum Datagram Size
 
@@ -281,7 +365,8 @@ A path element may tell the endpoint the maximum size of a datagram it is
 willing or able to forward for a session, to augment various path MTU discovery
 mechanisms.  This declaration uses the following key/value pairs:
 
-* mtu (unsigned, major type 0): the maximum transmission unit (in bytes)
+"mtu" (unsigned, major type 0)
+: the maximum transmission unit (in bytes)
 
 ### Rate Limit
 
@@ -295,9 +380,11 @@ output interface is connected to a limited or congested link, not as a
 substitute for loss-based or explicit congestion notification on the RTT
 timescale.  This declaration uses the following key/value pairs:
 
-* max-byte-rate (unsigned, major type 0): the maximum bandwidth (in bytes per
-  second)
-* max-packet-rate (unsigned, major type 0): the maximum bandwidth (in packets
+"max-byte-rate" (unsigned, major type 0)
+: the maximum bandwidth (in bytes per second)
+
+"max-packet-rate" (unsigned, major type 0)
+: the maximum bandwidth (in packets
   per second)
 
 ### Latency Advisory
@@ -307,35 +394,41 @@ path element. This mechanism is intended for "gross" latency advisories, for
 instance to declare the output interface is connected to a satellite or
 {{RFC1149}} link.  This declaration uses the following key/value pairs:
 
-* latency (floating point, major type 7): the latency (in seconds)
-
-[EDITOR'S NOTE (bht) if we're talking to hardware geeks on ASICs won't they hate having to pull in circuitry for IEEE floats if they don't already have it? Consider uint32 microseconds or, for interplanetary and/or severly bloated applications, uint64 microseconds.]
+"latency" (unsigned, major type 0)
+: the latency (in microseconds)
 
 ### Prohibition Report
 
 A path element which refuses to forward a packet may declare why the packet was
 not forwarded, similar to the various Destination Unreachable codes of ICMP.  
-Further thought will be given to how these reports interact with the ICMP
-support from {{icmp}}.
+
+[EDITOR'S NOTE: Further thought will be given to how these reports interact with
+the ICMP support from {{icmp}}.]
 
 # Declaration reflection
 
 In some cases, a device along the path may wish to send a path declaration but
-where the reverse path is not reachable from the device [EDITOR'S NOTE (bht): Bob
-Briscoe raised this issue during the SEMI workshop, which has largely to do with
-tunnels. It is not clear to me how a point along the path would know that
-it must reflect a declaration, but this is included for completeness] may
-instead reflect that declaration. A reflected declaration is a SPUD packet with
-both the pdec and adec flags set, and contains the same content as a path
-declaration would, but has the same source address and port and destination
-address and port as the SPUD packet which triggered it.
+may not be able to send packets ont he reverse path.  It may ask the endpoint in
+the forward direction to reflect a SPUD packet back along the reverse path in
+this case.
+
+[EDITOR'S NOTE: Bob Briscoe raised this issue during the SEMI workshop, which
+has largely to do with tunnels. It is not clear to the authors yet how a point
+along the path would know that it must reflect a declaration, but this approach
+is included for completeness.]
+
+A reflected declaration is a SPUD packet with both the pdec and adec flags set,
+and contains the same content as a path declaration would. However the packet
+has the same source address and port and destination address and port as the
+SPUD packet which triggered it.
 
 When a SPUD endpoint receives a declaration reflection, it SHOULD reflect it:
-swapping the source and destination addresses, stripping the adec bit, and
-sending it as if it were a path declaration.
+swapping the source and destination addresses IP addresses and ports.  The
+reflecting endpoint MUST unset the adec bit, sending the packet it as if it were
+a path declaration.
 
-Note: this facility will need careful security analysis before it makes it into
-any final specification.
+[EDITOR's NOTE: this facility will need careful security analysis before it
+makes it into any final specification.]
 
 # Application declarations
 
@@ -359,16 +452,22 @@ destination endpoint.
 The definition of an application declaration vocabulary is left as future work;
 we note only at this point that the mechanism supports such declarations.
 
-# Errors
+# CBOR Profile
 
-CBOR.
+Moving forward, we will likely specify a subset of CBOR that can be used in
+SPUD, including the avoidance of floating point numbers, indefinite-length
+arrays, and indefinite-length maps.  This will allow a significantly less
+complicated CBOR implementation to be used, which would be particularly nice on
+constrained devices.
 
 # Security Considerations
 
-This gives you ability to expose information about the mumble
+This gives endpoints the ability to expose information about conversations to
+elements on path.  As such, there are going to be very strict security
+requirements about what can be exposed, how it can be exposed, etc.  This
+prototype DOES NOT tackle these issues yet.
 
 # IANA Considerations
 
-## Operations
-
-## May want an IP protocol number
+If this protocol progresses beyond prototype in some way, a registry will be
+needed for well-known CBOR map keys.
