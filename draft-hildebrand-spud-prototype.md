@@ -150,7 +150,7 @@ would not use this pattern by mistake.  A survey of other protocols will be done
 to see if this pattern occurs often in existing traffic.
 
 The intent of this magic number is not to provide conclusive evidence that SPUD
-is being used in this packet, but instead to allow a very fast way to decide
+is being used in this packet, but instead to allow a very fast (i.e., trivially implementable in hardware) way to decide
 that SPUD is not in use on packets that do not include the magic number.
 
 ## Commands {#commands}
@@ -170,7 +170,7 @@ The pdec bit is set when the path is making a declaration to the application.
 ## Additional information
 
 If any of the command, adec, or pdec bits are set, the following data in the
-packet is a CBOR (major type 5).  No fragmentation mechanism is specified yet,
+packet is a CBOR map (major type 5).  No fragmentation mechanism is specified yet,
 but one is likely needed later.
 
 For Data-command SPUD packets with neither the adec nor the pdec bits set, the
@@ -262,6 +262,8 @@ a path declaration using the following key/value pairs:
 
 * ecn (True, major type 7): congestion has been detected
 
+[EDITOR'S NOTE (bht): we probably want to track current proposals to improve ECN resolution. DCTCP uses higher marking rate and lower response rate to get high resolution marking; we have ints, which are much more powerful. The main problem in my mind is figuring out a marking scheme that the midpoint can trivially measure and the endpoint can always correctly react to. Talk to Mirja Kuehlewind, she's spent a lot of time thinking about this...]
+
 ### Path element identity
 
 Path elements can describe themselves using the following key/value pairs:
@@ -307,6 +309,8 @@ instance to declare the output interface is connected to a satellite or
 
 * latency (floating point, major type 7): the latency (in seconds)
 
+[EDITOR'S NOTE (bht) if we're talking to hardware geeks on ASICs won't they hate having to pull in circuitry for IEEE floats if they don't already have it? Consider uint32 microseconds or, for interplanetary and/or severly bloated applications, uint64 microseconds.]
+
 ### Prohibition Report
 
 A path element which refuses to forward a packet may declare why the packet was
@@ -317,9 +321,9 @@ support from {{icmp}}.
 # Declaration reflection
 
 In some cases, a device along the path may wish to send a path declaration but
-where the reverse path is not reachable from the device [EDITOR'S NOTE: Bob
+where the reverse path is not reachable from the device [EDITOR'S NOTE (bht): Bob
 Briscoe raised this issue during the SEMI workshop, which has largely to do with
-tunnels. It is not clear to me (bht) how a point along the path would know that
+tunnels. It is not clear to me how a point along the path would know that
 it must reflect a declaration, but this is included for completeness] may
 instead reflect that declaration. A reflected declaration is a SPUD packet with
 both the pdec and adec flags set, and contains the same content as a path
