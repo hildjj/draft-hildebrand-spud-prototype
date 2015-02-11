@@ -271,7 +271,7 @@ The data associated with a path declaration may always have the following keys
 (and associated values), regardless of what other information is included:
 
 "ipaddr" (byte string, major type 2)
-: the IPv4 address or IPv6 address of the sender, as an string of 4 or 16 bytes
+: the IPv4 address or IPv6 address of the sender, as a string of 4 or 16 bytes
   in network order. This is necessary as the source IP address of the packet is
   spoofed
 
@@ -324,6 +324,29 @@ into a path declaration, using the following key/value pairs:
 
 Other information from particular ICMP codes may be parsed out into key/value
 pairs.
+
+### Address translation
+
+SPUD-aware path elements that perform Network Address Translation MUST send a
+path declaration describing the translation that was done, using the following
+key/value pairs:
+
+"translated-external-address" (byte string, major type 2)
+: The translated external IPv4 address or IPv6 address for this endpoint, as a
+  string of 4 or 16 bytes in network order
+
+"translated-external-port" (unsigned, major type 0)
+: The translated external UDP port number for this endpoint
+
+"internal-address" (byte string, major type 2)
+: The pre-translation (internal) IPv4 address or IPv6 address for this endpoint,
+  as a string of 4 or 16 bytes in network order
+
+"internal-port" (unsigned, major type 0)
+: The pre-translation (internal) UDP port number for this endpoint
+
+The internal addresses are useful when multiple address translations take place
+on the same path.
 
 ### Explicit congestion notification
 
