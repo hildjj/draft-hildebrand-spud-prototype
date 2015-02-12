@@ -354,7 +354,9 @@ in both directions with the length of that timer, using the following key/value
 pairs:
 
 "inactivity-timer" (unsigned, major type 0)
-: The length of the inactivity timer (in microseconds)
+: The length of the inactivity timer (in microseconds).  A value of 0 means no
+  timeout is being enforced by this path element, which might be useful if the
+  timeout changes over the lifetime of a tube.
 
 ## Explicit congestion notification
 
