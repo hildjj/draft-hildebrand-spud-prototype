@@ -49,8 +49,11 @@ module.exports = function(grunt) {
       },
       states: {
         command: 'dot states.dot -Tpng -o output/states.png'
+      },
+      release: {
+        command: './release.sh'
       }
-    }
+    },
   });
 
   grunt.registerTask('default', ['kramdown_rfc2629']);
@@ -58,4 +61,5 @@ module.exports = function(grunt) {
   grunt.registerTask('server', ['kramdown_rfc2629', 'express', 'watch'])
   grunt.registerTask('pdu2html', ['shell:pdu2html'])
   grunt.registerTask('states', ['shell:states'])
+  grunt.registerTask('release', ['shell:release'])
 };
