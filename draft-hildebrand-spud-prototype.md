@@ -1,5 +1,5 @@
 ---
-title: Session Protocol for User Datagrams (SPUD) Prototype
+title: Substrate Protocol for User Datagrams (SPUD) Prototype
 abbrev: I-D
 docname: draft-hildebrand-spud-prototype-00
 date: 2015-2-9
@@ -30,19 +30,19 @@ informative:
 
 --- abstract
 
-SPUD is a prototype for grouping UDP packets together in a session, also
+SPUD is a prototype for grouping UDP packets together in a "tube", also
 allowing network devices on the path between endpoints to participate
-explicitly in the session outside the end-to-end context.
+explicitly in the tube outside the end-to-end context.
 
 --- middle
 
 # Introduction
 
-The goal of SPUD (Session Protocol for User Datagrams) is to provide a mechanism
-for grouping UDP packets together into a session with a defined beginning and
-end.  Devices on the network path between the endpoints speaking SPUD may
-communicate explicitly with the endpoints outside the context of the end-to-end
-conversation.
+The goal of SPUD (Substrate Protocol for User Datagrams) is to provide a
+mechanism for grouping UDP packets together into a "tube" with a defined
+beginning and end in time.  Devices on the network path between the endpoints
+speaking SPUD may communicate explicitly with the endpoints outside the context
+of the end-to-end conversation.
 
 The SPUD protocol is a prototype, intended to promote further discussion of
 potential use cases within the framework of a concrete approach.  To move
@@ -67,33 +67,33 @@ and "OPTIONAL" are to be interpreted as described in BCP 14, RFC 2119
 * Single firewall-traversal mechanism, multiple transport semantics
 * Low overhead
   * Determine SPUD is in use (very fast)
-  * Associate packets with a session (relatively fast)
-* Policy per-session
+  * Associate packets with a tube (relatively fast)
+* Policy per-tube
 * Multiple interfaces for each endpoint
 
-# Lifetime of a session
+# Lifetime of a tube
 
-A session is a grouping of packets between two endpoints on the network.
-Sessions are started by the "initiator" expressing an interest in comminicating
-with the "responder".  A session may be closed by either endpoint.  
+A tube is a grouping of packets between two endpoints on the network.
+Tubes are started by the "initiator" expressing an interest in comminicating
+with the "responder".  A tube may be closed by either endpoint.  
 
-A session may be in one of the following states:
+A tube may be in one of the following states:
 
 unknown
-: no information is currently known about the session.  All sessions
+: no information is currently known about the tube.  All tubes
   implicitly start in the unknown state.
 
 opening
-: the initiator has requested a session that the responder has not yet
+: the initiator has requested a tube that the responder has not yet
   acknowledged.
 
 running
-: the session is set up and will allow data to flow
+: the tube is set up and will allow data to flow
 
 resuming
-: an out-of-sequence SPUD packet has been received for this session.
+: an out-of-sequence SPUD packet has been received for this tube.
   Policy will need to be developed describing how (or if) this state can be
-  exploited for quicker session resumption by higher-level protocols.
+  exploited for quicker tube resumption by higher-level protocols.
 
 This leads to the following state transitions (see {{commands}} for details on
 the commands that cause transitions):
@@ -130,7 +130,7 @@ the UDP header.
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |                       magic = 0xd80000d8                      |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |cmd|a|p|                  Session ID                           |
+    |cmd|a|p|                   tube ID                             |
     +-+-+-+-+                                                       +
     |                                                               |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -144,7 +144,7 @@ The fields in the packet are:
 * 2 bits of command (see {{commands}})
 * 1 bit marking this packet as an application declaration (adec)
 * 1 bit marking this packet as a path declaration (pdec)
-* 60 bits defining the id of this session
+* 60 bits defining the id of this tube
 * Data.  If any of the command, adec, or pdec bits are set, the data is CBOR.
 
 ## Detecting usage {#magic}
@@ -165,13 +165,13 @@ that SPUD is not in use on packets that do not include the magic number.
 The next 2 bits of a SPUD packet encode a command:
 
 Data (00)
-: Normal data in a running session
+: Normal data in a running tube
 
 Open (01)
-: A request to begin a session
+: A request to begin a tube
 
 Close (10)
-: A request to end a session
+: A request to end a tube
 
 Ack (11)
 : An acknowledgement to an open request
@@ -203,27 +203,27 @@ The overhead for always using CBOR is therefore effectively three or more bytes
 containing one byte).  [EDITOR'S NOTE: It may be that the simplicity and
 extensisbility of this approach is worth the three bytes of overhead.]  
 
-# Initiating a session
+# Initiating a tube
 
-To begin a session, the initiator sends a SPUD packet with the "open" command
+To begin a tube, the initiator sends a SPUD packet with the "open" command
 (bits 01).  
 
 Future versions of this specification may contain CBOR requesting proof of
 implementation from the receiving endpoint.
 
-# Acknowledging session creation
+# Acknowledging tube creation
 
-To acknowledge the creation of a session, the responder sends a SPUD packet with
+To acknowledge the creation of a tube, the responder sends a SPUD packet with
 the "ack" command (bits 11).  The current thought is that the security provided
 by the TCP three-way handshake would be left to transport protocols inside of
 SPUD.  Further exploration of this prototype will help decide how much of this
 handshake needs to be made visible to path elements that *only* process SPUD.
 
-# Closing a session
+# Closing a tube
 
-To close a session, either side sends a packet with the "close" command (bits
-10).  Whenever a path element sees a close packet for a session, it MAY drop
-all stored state for that session.  Further exploration of this prototype will
+To close a tube, either side sends a packet with the "close" command (bits
+10).  Whenever a path element sees a close packet for a tube, it MAY drop
+all stored state for that tube.  Further exploration of this prototype will
 determine when close packets are sent, what CBOR they contain, and how they
 interact with transport protocols inside of SPUD.
 
@@ -238,7 +238,7 @@ information in the following CBOR keys (and associated values):
 
 "url" (text string, major type 3)
 : a URL identifying some information about the path or its relationship with
-  the session. The URL represents some path condition, and retrieval of
+  the tube. The URL represents some path condition, and retrieval of
   content at the URL should include a human-readable description.
 
 
@@ -247,12 +247,12 @@ information in the following CBOR keys (and associated values):
 SPUD can be used for path declarations: information delivered to the endpoints
 from devices along the path. Path declarations can be thought of as enhanced
 ICMP for transports using SPUD, allowing information about the condition or
-state of the path or the session to be communicated directly to a sender.
+state of the path or the tube to be communicated directly to a sender.
 
 Path declarations are always sent directly back to a sender in response to a
-SPUD packet. The scope of a path declaration is the session (identified by
-Session ID) to which it is associated. Devices along the path cannot make
-declarations to endpoints without a session to associate them with.  Path
+SPUD packet. The scope of a path declaration is the tube (identified by
+tube ID) to which it is associated. Devices along the path cannot make
+declarations to endpoints without a tube to associate them with.  Path
 declarations are sent to one endpoint in a SPUD conversation by the path device
 sending SPUD packets with the source IP address and UDP port from the other
 endpoint in the conversation.  These "spoofed" packets  are required to allow
@@ -280,7 +280,7 @@ The data associated with a path declaration may always have the following keys
 
 "url" (text string, major type 3)
 : a URL identifying some information about the path or its relationship with
-  the session. The URL represents some path condition, and retrieval of
+  the tube. The URL represents some path condition, and retrieval of
   content at the URL should include a human-readable description.
 
 "warning" (map, major type 5)
@@ -313,7 +313,7 @@ into a path declaration, using the following key/value pairs:
 "icmp" (byte string, major type 2)
 : the full ICMP payload. This is  intended to allow ICMP messages (which may be
   blocked by the path, or not made available to the receiving application) to be
-  bound to a session. Note that sending a path declaration ICMP message is not a
+  bound to a tube. Note that sending a path declaration ICMP message is not a
   substitute for sending a required ICMP or ICMPv6 message.
 
 "icmp-type" (unsigned, major type 0)
@@ -385,7 +385,7 @@ Path elements can describe themselves using the following key/value pairs:
 ### Maximum Datagram Size
 
 A path element may tell the endpoint the maximum size of a datagram it is
-willing or able to forward for a session, to augment various path MTU discovery
+willing or able to forward for a tube, to augment various path MTU discovery
 mechanisms.  This declaration uses the following key/value pairs:
 
 "mtu" (unsigned, major type 0)
@@ -394,7 +394,7 @@ mechanisms.  This declaration uses the following key/value pairs:
 ### Rate Limit
 
 A path element may tell the endpoint the maximum data rate (in octets or
-packets) that it is willing or able to forward for a session. As all path
+packets) that it is willing or able to forward for a tube. As all path
 declarations are advisory, the device along the path must not rely on the
 endpoint to set its sending rate at or below the declared rate limit, and
 reduction of rate is not a guarantee to the endpoint of zero queueing delay.
@@ -456,9 +456,9 @@ makes it into any final specification.]
 # Application declarations
 
 Applications may also use the SPUD mechanism to describe the traffic in the
-session to the application on the other side, and/or to any point along the
+tube to the application on the other side, and/or to any point along the
 path. As with path declarations, the scope of an application declaration is the
-session (identified by Session ID) to which it is associated.
+tube (identified by tube ID) to which it is associated.
 
 An application declaration is a SPUD packet with the adec flag set, and contains
 an application declaration formatted in CBOR in its payload. As with path
@@ -468,7 +468,7 @@ the following keys:
 * cookie (byte string, major type 2): an identifier for this application
   declaration, used to address a particular path element
 
-Unless the cookie matches one sent by the path element for this session, every
+Unless the cookie matches one sent by the path element for this tube, every
 device along the path MUST forward application declarations on towards the
 destination endpoint.
 
