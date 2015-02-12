@@ -1,8 +1,8 @@
 ---
 title: Substrate Protocol for User Datagrams (SPUD) Prototype
 abbrev: I-D
-docname: draft-hildebrand-spud-prototype-00
-date: 2015-2-9
+docname: draft-hildebrand-spud-prototype-01
+date: 2015-2-12
 category: info
 ipr: trust200902
 
@@ -507,3 +507,9 @@ security perspective.  The prototype is clearly not yet to that point.
 
 If this protocol progresses beyond prototype in some way, a registry will be
 needed for well-known CBOR map keys.
+
+# Acknowledgements
+
+Thanks to Ted Hardie for suggesting the change from "Session" to "Substrate" in
+the title, and to Joel Halpern for suggesting the change from "session" to
+"tube" in the protocol description.
