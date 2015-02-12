@@ -249,9 +249,9 @@ from devices along the path. Path declarations can be thought of as enhanced
 ICMP for transports using SPUD, allowing information about the condition or
 state of the path or the tube to be communicated directly to a sender.
 
-Path declarations are always sent directly back to a sender in response to a
-SPUD packet. The scope of a path declaration is the tube (identified by
-tube ID) to which it is associated. Devices along the path cannot make
+Path declarations may be sent in either direction (toward the initiator or
+responder) at any time.  The scope of a path declaration is the tube (identified
+by tube ID) to which it is associated. Devices along the path cannot make
 declarations to endpoints without a tube to associate them with.  Path
 declarations are sent to one endpoint in a SPUD conversation by the path device
 sending SPUD packets with the source IP address and UDP port from the other
@@ -289,8 +289,6 @@ The data associated with a path declaration may always have the following keys
   a user that understands that language.  The key "*" can be used as the
   default.
 
-## Path Declaration Vocabulary
-
 The SPUD mechanism is defined to be completely extensible in terms of the types
 of path declarations that can be made. However, in order for this mechanism to
 be of use, endpoints and devices along the path must share a relatively limited
@@ -302,7 +300,7 @@ Terms in this vocabulary considered universally useful may be added to the SPUD
 path declaration map keys, which in this case would then be defined as an IANA
 registry.
 
-### ICMP {#icmp}
+## ICMP {#icmp}
 
 ICMP {{RFC4443}} (e.g.) messages are sometimes blocked by path elements
 attempting to provide  security.  Even when they are delivered to the host, many
@@ -325,7 +323,7 @@ into a path declaration, using the following key/value pairs:
 Other information from particular ICMP codes may be parsed out into key/value
 pairs.
 
-### Address translation
+## Address translation
 
 SPUD-aware path elements that perform Network Address Translation MUST send a
 path declaration describing the translation that was done, using the following
@@ -348,7 +346,17 @@ key/value pairs:
 The internal addresses are useful when multiple address translations take place
 on the same path.
 
-### Explicit congestion notification
+## Tube lifetime
+
+SPUD-aware path elements that are maintaining state MAY drop state using
+inactivity timers, however if they use a timer they MUST send a path declaration
+in both directions with the length of that timer, using the following key/value
+pairs:
+
+"inactivity-timer" (unsigned, major type 0)
+: The length of the inactivity timer (in microseconds)
+
+## Explicit congestion notification
 
 Similar to ICMP, getting explicit access to ECN {{RFC3168}} information in
 applications can be difficult.  As such, a path element might decide to generate
@@ -359,10 +367,10 @@ a path declaration using the following key/value pairs:
 
 [EDITOR'S NOTE: we will track current proposals to improve ECN resolution here.
 DCTCP uses higher marking rate and lower response rate to get high resolution
-marking; we have ints, which are much more powerful, if we can find an algorithm
+marking; we have ints, which are more powerful, if we can find an algorithm
 simple enough for path elements to use.]
 
-### Path element identity
+## Path element identity
 
 Path elements can describe themselves using the following key/value pairs:
 
@@ -382,7 +390,7 @@ Path elements can describe themselves using the following key/value pairs:
 : IP time to live / IPv6 Hop Limit of associated device [EDITOR'S NOTE: more
   detail is required on how this is calculated]
 
-### Maximum Datagram Size
+## Maximum Datagram Size
 
 A path element may tell the endpoint the maximum size of a datagram it is
 willing or able to forward for a tube, to augment various path MTU discovery
@@ -391,7 +399,7 @@ mechanisms.  This declaration uses the following key/value pairs:
 "mtu" (unsigned, major type 0)
 : the maximum transmission unit (in bytes)
 
-### Rate Limit
+## Rate Limit
 
 A path element may tell the endpoint the maximum data rate (in octets or
 packets) that it is willing or able to forward for a tube. As all path
@@ -410,7 +418,7 @@ timescale.  This declaration uses the following key/value pairs:
 : the maximum bandwidth (in packets
   per second)
 
-### Latency Advisory
+## Latency Advisory
 
 A path element may tell the endpoint the latency attributable to traversing that
 path element. This mechanism is intended for "gross" latency advisories, for
@@ -420,7 +428,7 @@ instance to declare the output interface is connected to a satellite or
 "latency" (unsigned, major type 0)
 : the latency (in microseconds)
 
-### Prohibition Report
+## Prohibition Report
 
 A path element which refuses to forward a packet may declare why the packet was
 not forwarded, similar to the various Destination Unreachable codes of ICMP.  
