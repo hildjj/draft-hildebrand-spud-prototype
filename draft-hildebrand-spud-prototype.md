@@ -56,12 +56,34 @@ In this document, the key words "MUST", "MUST NOT", "REQUIRED",
 and "OPTIONAL" are to be interpreted as described in BCP 14, RFC 2119
 {{RFC2119}}.
 
-# Requirements
+# Requirements and Assumptions
+
+This prototype is following requirements and assumptions:
 
 * Deploy on existing Internet
-* No kernel modifications required
+
+First, SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or "jailbreak") on the endpoints. Eventually, we envision that SPUD will be implemented in operating system kernels as part of the IP stack. However, we also assume that there will be a (very) long transition to this state, and SPUD must be useful and deployable during this transition.
+
+(SPUD must be implementable over Berkeley sockets)
+
+In addition, userspace implementations of SPUD can be used for rapid deployment testing of SPUD itself and new transport protocols over SPUD in heterogeneous environments.
+
+These requirements led us to select UDP to encapsulate SPUD, 
+
+
+
+
+- Backward compatibility
+
+- Unprivileged userspace implementation *possible*
+
+
+SPUD is designed to meet a set of requirements derived from (something)
+
+First and foremost, SPUD must be incrementally deployable in the current Internet. Endpoint implementations must 
+
 * Only widely-available APIs required
-* No root permissions required for endpoint applications
+
 * New choices for congestion, retransmit, etc. available in transport protocols
   inside SPUD
 * Single firewall-traversal mechanism, multiple transport semantics
