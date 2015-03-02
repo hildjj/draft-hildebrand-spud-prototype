@@ -58,26 +58,57 @@ and "OPTIONAL" are to be interpreted as described in BCP 14, RFC 2119
 
 # Requirements, Assumptions and Rationale
 
-The prototype described in this document is designed to provide an encapsulation for transport protocols which allows minimal and selective exposure of transport semantics, and other transport- and higher-layer information; and explicit discovery of selected information about devices along the path by the transport and higher layers. 
+The prototype described in this document is designed to provide an encapsulation
+for transport protocols which allows minimal and selective exposure of transport
+semantics, and other transport- and higher-layer information; and explicit
+discovery of selected information about devices along the path by the transport
+and higher layers.
 
-The encryption of transport- and higher-layer content encapsulated within SPUD is not mandatory; however, the eventual intention is that explicit communication between endpoints and the path can largely replace the implicit endpoint-to-path communitication presently derived by middleboxs through deep packet inspection (DPI). 
+The encryption of transport- and higher-layer content encapsulated within SPUD
+is not mandatory; however, the eventual intention is that explicit communication
+between endpoints and the path can largely replace the implicit endpoint-to-path
+communication presently derived by middleboxs through deep packet inspection
+(DPI).
 
-SPUD is not a transport protocol; rather, we envision it as the lowest layer of a "transport construction kit". Using SPUD as a common encapsulation, such that new transports have a common appearance to middleboxes, applications, platforms, and operating systems can provide a variety of transport protocols or transport protocol modules. This construction kit is out of scope for this prototype, and left to future work, though we note it could be an alternate implementation of an eventual TAPS interface.
+SPUD is not a transport protocol; rather, we envision it as the lowest layer of
+a "transport construction kit". Using SPUD as a common encapsulation, such that
+new transports have a common appearance to middleboxes, applications, platforms,
+and operating systems can provide a variety of transport protocols or transport
+protocol modules. This construction kit is out of scope for this prototype, and
+left to future work, though we note it could be an alternate implementation of
+an eventual TAPS interface.
 
 The design is based on the following requirements and assumptions:
 
-- Transport semantics and many properties of communication that endpoints may want to expose to middleboxes are bound to flows or groups of flows. SPUD must therefore provide a basic facility for associating packets together (into what we call a "tube" for lack of a better term).
+- Transport semantics and many properties of communication that endpoints may
+  want to expose to middleboxes are bound to flows or groups of flows. SPUD must
+  therefore provide a basic facility for associating packets together (into what
+  we call a "tube" for lack of a better term).
 
-- SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or "jailbreak") on the endpoints. Eventually, we envision that SPUD will be implemented in operating system kernels as part of the IP stack. However, we also assume that there will be a (very) long transition to this state, and SPUD must be useful and deployable during this transition. In addition, userspace implementations of SPUD can be used for rapid deployment of SPUD itself and new transport protocols over SPUD, e.g. in web browsers.
+- SPUD and transports above SPUD must be implementable without requiring kernel
+  replacements or modules on the endpoints, and without having special privilege
+  (root or "jailbreak") on the endpoints. Eventually, we envision that SPUD will
+  be implemented in operating system kernels as part of the IP stack. However,
+  we also assume that there will be a (very) long transition to this state, and
+  SPUD must be useful and deployable during this transition. In addition,
+  userspace implementations of SPUD can be used for rapid deployment of SPUD
+  itself and new transport protocols over SPUD, e.g. in web browsers.
 
-- SPUD must operate in the present Internet. In order to ensure deployment, it must also be useful as an encapsulation between endpoints even before the deployment of middleboxes that understand it. 
+- SPUD must operate in the present Internet. In order to ensure deployment, it
+  must also be useful as an encapsulation between endpoints even before the
+  deployment of middleboxes that understand it.
 
-- SPUD must be low-overhead, specifically requiring very little effort to recognize that a packet is a SPUD packet and to determine the tube it is associated with.
+- SPUD must be low-overhead, specifically requiring very little effort to
+  recognize that a packet is a SPUD packet and to determine the tube it is
+  associated with.
 
-- SPUD must impose minimal restrictions on the transport protocols it encapsulates. Specifically, SPUD must also support multipath and multicast "tubes", and require no semantics beyond start and end of tube.
+- SPUD must impose minimal restrictions on the transport protocols it
+  encapsulates.  SPUD must work in multipath and multicast
+  environments.
 
-- SPUD must allow for binding of information to a tube as well as to an individual packet within a tube [EDITOR'S NOTE: discuss. is this true?]
-
+- SPUD must provide incentives for development and deployment by multiple
+  communities.  These communities and incentives will be defined through the
+  prototyping process.
 
 # Lifetime of a tube
 
@@ -174,7 +205,8 @@ that SPUD is not in use on packets that do not include the magic number.
 
 ## TUBE ID
 
-The 64-bit tube ID uniquely identifies a given tube.  All commands (see {{commands}}) are scoped to a single tube.
+The 64-bit tube ID uniquely identifies a given tube.  All commands (see
+{{commands}}) are scoped to a single tube.
 
 ## Commands {#commands}
 
@@ -199,7 +231,9 @@ The pdec bit is set when the path is making a declaration to the application.
 
 ## Reserved bits
 
-The final required four bits of SPUD packet MUST all be set to zero in this version of the protocol.  These bits could be used for extensions in future versions.
+The final required four bits of SPUD packet MUST all be set to zero in this
+version of the protocol.  These bits could be used for extensions in future
+versions.
 
 ## Additional information
 
