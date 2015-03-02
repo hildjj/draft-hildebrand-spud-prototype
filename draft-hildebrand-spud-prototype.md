@@ -1,8 +1,8 @@
 ---
 title: Substrate Protocol for User Datagrams (SPUD) Prototype
 abbrev: I-D
-docname: draft-hildebrand-spud-prototype-01
-date: 2015-2-12
+docname: draft-hildebrand-spud-prototype-02
+date: 2015-3-2
 category: info
 ipr: trust200902
 
@@ -98,27 +98,30 @@ resuming
 This leads to the following state transitions (see {{commands}} for details on
 the commands that cause transitions):
 
-    +--------------------+ +-----+
-    |                    | |close|
-    |                    v |     v
-    |      +-----open--- +-------+ <--close----+
-    |      |             |unknown|             |
-    |      |    +------> +-------+ --ack,-+    |
-    |      |    |                    data |    |
-    |      |  close                       |    |
-    |      v    |                         v    |
-    |     +-------+ -------data-------> +--------+
-    | +---|opening|                     |resuming|---+
-    | |   +-------+ <------open-------- +--------+   |
-    | |     ^   |                         |    ^     |
-    | |     |   |                         |    |     |
-    | +open-+   +-ack--> +-------+ <--ack-+    +-data+
-    |                    |running|
-    +-------close------- +-------+
-                          ^    |
-                          |    | open,ack,data
-                          +----+
+    +---------------------+ +-----+
+    |                     | |close|
+    |                     v |     v
+    |        +---sopen--- +-------+ <--close----+
+    |        |            |unknown|             |
+    |        |    +-----> +-------+ -ack,--+    |
+    |        |    |            \     data  |    |
+    |        |  close         open         |    |
+    |        v    |              \         v    |
+    |       +-------+ ------data-------> +--------+
+    | +-----|opening|              )     |resuming|----+
+    | |     +-------+ <-----open-------- +--------+    |
+    | |       ^   |              /         |    ^      |
+    | |       |   |             v          |    |      |
+    | +-sopen-+   +-ack-> +-------+ <-ack,-+    +-data-+
+    |                     |running|   open
+    +---------close------ +-------+
+                            ^    |
+                            |    | open,ack,data
+                            +----+
 {: #states title="State transitions"}
+
+All of the state transitions happen when a command is received, except for the
+"sopen" transition which occurs when an open command is sent.
 
 # Packet layout
 
@@ -130,22 +133,23 @@ the UDP header.
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |                       magic = 0xd80000d8                      |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |cmd|a|p|                   tube ID                             |
-    +-+-+-+-+                                                       +
+    |                            tube ID                            |
+    +                                                               +
     |                                                               |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                           CBOR Map                            |
+    |cmd|a|p|  resv |           CBOR map...                         |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 {: #packet title="SPUD packets"}
 
 The fields in the packet are:
 
 * 32-bit constant magic number (see {{magic}})
+* 64 bits defining the id of this tube
 * 2 bits of command (see {{commands}})
 * 1 bit marking this packet as an application declaration (adec)
 * 1 bit marking this packet as a path declaration (pdec)
-* 60 bits defining the id of this tube
-* Data.  If any of the command, adec, or pdec bits are set, the data is CBOR.
+* 4 reserved bits that MUST be set to 0 for this version of the protocol
+* If more bytes are present, they contain a CBOR map
 
 ## Detecting usage {#magic}
 
@@ -159,6 +163,10 @@ to see if this pattern occurs often in existing traffic.
 The intent of this magic number is not to provide conclusive evidence that SPUD
 is being used in this packet, but instead to allow a very fast (i.e., trivially implementable in hardware) way to decide
 that SPUD is not in use on packets that do not include the magic number.
+
+## TUBE ID
+
+The 64-bit tube ID uniquely identifies a given tube.  All commands (see {{commands}}) are scoped to a single tube.
 
 ## Commands {#commands}
 
@@ -181,15 +189,19 @@ Ack (11)
 The adec bit is set when the application is making a declaration to the path.
 The pdec bit is set when the path is making a declaration to the application.
 
+## Reserved bits
+
+The final required four bits of SPUD packet MUST all be set to zero in this version of the protocol.  These bits could be used for extensions in future versions.
+
 ## Additional information
 
-The information after the SPUD header is a CBOR {{RFC7049}} map (major type 5).
-Each key in the map may be an integer (major type 0 or 1) or a text string
-(major type 3).  Integer keys are reserved for standardized protocols, with a
-registry defining their meaning.  This convention can save several bytes per
-packet, since small integers only take a single byte in the CBOR encoding, and
-a single-character string takes at least two bytes (more when useful-length
-strings are used).
+The information after the SPUD header (if it exists) is a CBOR {{RFC7049}} map
+(major type 5). Each key in the map may be an integer (major type 0 or 1) or a
+text string (major type 3).  Integer keys are reserved for standardized
+protocols, with a registry defining their meaning.  This convention can save
+several bytes per packet, since small integers only take a single byte in the
+CBOR encoding, and a single-character string takes at least two bytes (more when
+useful-length strings are used).
 
 The only integer keys reserved by this version of the document are:
 
@@ -198,18 +210,18 @@ The only integer keys reserved by this version of the document are:
   Often this will be a byte string (major type 2), particularly for protocols
   that encrypt data.
 
-The overhead for always using CBOR is therefore effectively three or more bytes
+The overhead for always using CBOR is therefore effectively three or more bytes:
 0xA1 (map with one element), 0x00 (integer 0 as the key), and 0x41 (byte string
 containing one byte).  [EDITOR'S NOTE: It may be that the simplicity and
-extensisbility of this approach is worth the three bytes of overhead.]  
+extensibility of this approach is worth the three bytes of overhead.]  
 
 # Initiating a tube
 
 To begin a tube, the initiator sends a SPUD packet with the "open" command
 (bits 01).  
 
-Future versions of this specification may contain CBOR requesting proof of
-implementation from the receiving endpoint.
+Future versions of this specification may contain CBOR in the open packet.  One
+example might be requesting proof of implementation from the receiving endpoint,
 
 # Acknowledging tube creation
 
@@ -219,13 +231,16 @@ by the TCP three-way handshake would be left to transport protocols inside of
 SPUD.  Further exploration of this prototype will help decide how much of this
 handshake needs to be made visible to path elements that *only* process SPUD.
 
+Future versions of this specification may contain CBOR in the ack packet.  One
+example might be answering an implementation proof request from the initiator.
+
 # Closing a tube
 
-To close a tube, either side sends a packet with the "close" command (bits
-10).  Whenever a path element sees a close packet for a tube, it MAY drop
-all stored state for that tube.  Further exploration of this prototype will
-determine when close packets are sent, what CBOR they contain, and how they
-interact with transport protocols inside of SPUD.
+To close a tube, either side sends a packet with the "close" command (bits 10).
+Whenever a path element sees a close packet for a tube, it MAY drop all stored
+state for that tube.  Further exploration of this prototype will determine when
+close packets are sent, what CBOR they contain, and how they interact with
+transport protocols inside of SPUD.
 
 What is likely at this time is that SPUD close packets MAY contain error
 information in the following CBOR keys (and associated values):
