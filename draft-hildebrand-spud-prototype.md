@@ -2,7 +2,7 @@
 title: Substrate Protocol for User Datagrams (SPUD) Prototype
 abbrev: I-D
 docname: draft-hildebrand-spud-prototype-02
-date: 2015-3-2
+date: 2015-3-3
 category: info
 ipr: trust200902
 
@@ -67,7 +67,7 @@ and higher layers.
 The encryption of transport- and higher-layer content encapsulated within SPUD
 is not mandatory; however, the eventual intention is that explicit communication
 between endpoints and the path can largely replace the implicit endpoint-to-path
-communication presently derived by middleboxs through deep packet inspection
+communication presently derived by middleboxes through deep packet inspection
 (DPI).
 
 SPUD is not a transport protocol; rather, we envision it as the lowest layer of
@@ -103,7 +103,7 @@ The design is based on the following requirements and assumptions:
   associated with.
 
 - SPUD must impose minimal restrictions on the transport protocols it
-  encapsulates.  SPUD must work in multipath and multicast
+  encapsulates.  SPUD must work in multipath, multicast, and mobile
   environments.
 
 - SPUD must provide incentives for development and deployment by multiple
@@ -200,13 +200,17 @@ would not use this pattern by mistake.  A survey of other protocols will be done
 to see if this pattern occurs often in existing traffic.
 
 The intent of this magic number is not to provide conclusive evidence that SPUD
-is being used in this packet, but instead to allow a very fast (i.e., trivially implementable in hardware) way to decide
-that SPUD is not in use on packets that do not include the magic number.
+is being used in this packet, but instead to allow a very fast (i.e., trivially
+implementable in hardware) way to decide that SPUD is not in use on packets that
+do not include the magic number.
 
 ## TUBE ID
 
 The 64-bit tube ID uniquely identifies a given tube.  All commands (see
 {{commands}}) are scoped to a single tube.
+
+[EDITOR'S NOTE: Does a Tube ID have to be bound to a single source address or
+not?  This would be for mobility, not multipath.]
 
 ## Commands {#commands}
 
@@ -251,6 +255,9 @@ The only integer keys reserved by this version of the document are:
 : Application Data. Any CBOR data type, used as application-specific data.
   Often this will be a byte string (major type 2), particularly for protocols
   that encrypt data.
+
+The 0 key MUST NOT be used when the adec or pdec bit is set.  Path elements MUST
+NOT inspect or modify the contents of the 0 key.
 
 The overhead for always using CBOR is therefore effectively three or more bytes:
 0xA1 (map with one element), 0x00 (integer 0 as the key), and 0x41 (byte string
@@ -297,7 +304,6 @@ information in the following CBOR keys (and associated values):
 : a URL identifying some information about the path or its relationship with
   the tube. The URL represents some path condition, and retrieval of
   content at the URL should include a human-readable description.
-
 
 # Path declarations
 
@@ -414,20 +420,6 @@ pairs:
 : The length of the inactivity timer (in microseconds).  A value of 0 means no
   timeout is being enforced by this path element, which might be useful if the
   timeout changes over the lifetime of a tube.
-
-## Explicit congestion notification
-
-Similar to ICMP, getting explicit access to ECN {{RFC3168}} information in
-applications can be difficult.  As such, a path element might decide to generate
-a path declaration using the following key/value pairs:
-
-"ecn" (True, major type 7)
-: congestion has been detected
-
-[EDITOR'S NOTE: we will track current proposals to improve ECN resolution here.
-DCTCP uses higher marking rate and lower response rate to get high resolution
-marking; we have ints, which are more powerful, if we can find an algorithm
-simple enough for path elements to use.]
 
 ## Path element identity
 
