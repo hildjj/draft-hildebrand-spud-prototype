@@ -80,6 +80,9 @@ an eventual TAPS interface.
 
 The design is based on the following requirements and assumptions:
 
+- SPUD must enable multiple new transport semantics without requiring updates
+  to SPUD implementations in middleboxes.
+
 - Transport semantics and many properties of communication that endpoints may
   want to expose to middleboxes are bound to flows or groups of flows. SPUD must
   therefore provide a basic facility for associating packets together (into what
@@ -236,8 +239,10 @@ The pdec bit is set when the path is making a declaration to the application.
 ## Reserved bits
 
 The final required four bits of SPUD packet MUST all be set to zero in this
-version of the protocol.  These bits could be used for extensions in future
-versions.
+version of the protocol.  Implementors of this version of the protocol MUST
+ignore these bits.
+
+The reseved bits could be used for extensions in future versions.
 
 ## Additional information
 
@@ -338,7 +343,7 @@ The data associated with a path declaration may always have the following keys
   in network order. This is necessary as the source IP address of the packet is
   spoofed
 
-"cookie" (byte string, major type 2)
+"token" (byte string, major type 2)
 : data that identifies the sending path element unambiguously
 
 "url" (text string, major type 3)
@@ -389,8 +394,9 @@ pairs.
 ## Address translation
 
 SPUD-aware path elements that perform Network Address Translation MUST send a
-path declaration describing the translation that was done, using the following
-key/value pairs:
+path declaration describing the translation that was done, only to the endpoint
+whose address was translated (the "internal" side in a typical NAT deployment).
+It uses the following key/value pairs:
 
 "translated-external-address" (byte string, major type 2)
 : The translated external IPv4 address or IPv6 address for this endpoint, as a
@@ -524,10 +530,10 @@ an application declaration formatted in CBOR in its payload. As with path
 declarations, an application declaration is a CBOR map, which may always have
 the following keys:
 
-* cookie (byte string, major type 2): an identifier for this application
+* "token" (byte string, major type 2): an identifier for this application
   declaration, used to address a particular path element
 
-Unless the cookie matches one sent by the path element for this tube, every
+Unless the token matches one sent by the path element for this tube, every
 device along the path MUST forward application declarations on towards the
 destination endpoint.
 
