@@ -413,8 +413,8 @@
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Hildebrand, J. and B. Trammell" />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-hildebrand-spud-prototype-02" />
-  <meta name="dct.issued" scheme="ISO8601" content="2015-3-03" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-hildebrand-spud-prototype-03" />
+  <meta name="dct.issued" scheme="ISO8601" content="2015-3-09" />
   <meta name="dct.abstract" content="SPUD is a prototype for grouping UDP packets together in a &#8220;tube&#8221;, also allowing network devices on the path between endpoints to participate explicitly in the tube outside the end-to-end context." />
   <meta name="description" content="SPUD is a prototype for grouping UDP packets together in a &#8220;tube&#8221;, also allowing network devices on the path between endpoints to participate explicitly in the tube outside the end-to-end context." />
 
@@ -438,12 +438,12 @@
   <td class="right">B. Trammell</td>
 </tr>
 <tr>
-  <td class="left">Expires: September 4, 2015</td>
+  <td class="left">Expires: September 10, 2015</td>
   <td class="right">ETH Zurich</td>
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">March 03, 2015</td>
+  <td class="right">March 09, 2015</td>
 </tr>
 
     	
@@ -451,7 +451,7 @@
   </table>
 
   <p class="title">Substrate Protocol for User Datagrams (SPUD) Prototype<br />
-  <span class="filename">draft-hildebrand-spud-prototype-02</span></p>
+  <span class="filename">draft-hildebrand-spud-prototype-03</span></p>
   
   <h1 id="rfc.abstract">
   <a href="#rfc.abstract">Abstract</a>
@@ -463,7 +463,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on September 4, 2015.</p>
+<p>This Internet-Draft will expire on September 10, 2015.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -482,6 +482,7 @@
 <p/>
 
 <ul>
+  <li>SPUD must enable multiple new transport semantics without requiring updates to SPUD implementations in middleboxes.</li>
   <li>Transport semantics and many properties of communication that endpoints may want to expose to middleboxes are bound to flows or groups of flows. SPUD must therefore provide a basic facility for associating packets together (into what we call a &#8220;tube&#8221; for lack of a better term).</li>
   <li>SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or &#8220;jailbreak&#8221;) on the endpoints. Eventually, we envision that SPUD will be implemented in operating system kernels as part of the IP stack. However, we also assume that there will be a (very) long transition to this state, and SPUD must be useful and deployable during this transition. In addition, userspace implementations of SPUD can be used for rapid deployment of SPUD itself and new transport protocols over SPUD, e.g. in web browsers.</li>
   <li>SPUD must operate in the present Internet. In order to ensure deployment, it must also be useful as an encapsulation between endpoints even before the deployment of middleboxes that understand it.</li>
@@ -490,7 +491,7 @@
   <li>SPUD must provide incentives for development and deployment by multiple communities.  These communities and incentives will be defined through the prototyping process.</li>
 </ul>
 <h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#lifetime-of-a-tube" id="lifetime-of-a-tube">Lifetime of a tube</a></h1>
-<p id="rfc.section.3.p.1">A tube is a grouping of packets between two endpoints on the network.  Tubes are started by the &#8220;initiator&#8221; expressing an interest in comminicating with the &#8220;responder&#8221;.  A tube may be closed by either endpoint.  </p>
+<p id="rfc.section.3.p.1">A tube is a grouping of packets between two endpoints on the network.  Tubes are started by the &#8220;initiator&#8221; expressing an interest in comminicating with the &#8220;responder&#8221;.  A tube may be closed by either endpoint.</p>
 <p id="rfc.section.3.p.2">A tube may be in one of the following states:</p>
 <p/>
 
@@ -584,7 +585,8 @@
 <h1 id="rfc.section.4.4"><a href="#rfc.section.4.4">4.4.</a> <a href="#declaration-bits" id="declaration-bits">Declaration bits</a></h1>
 <p id="rfc.section.4.4.p.1">The adec bit is set when the application is making a declaration to the path.  The pdec bit is set when the path is making a declaration to the application.</p>
 <h1 id="rfc.section.4.5"><a href="#rfc.section.4.5">4.5.</a> <a href="#reserved-bits" id="reserved-bits">Reserved bits</a></h1>
-<p id="rfc.section.4.5.p.1">The final required four bits of SPUD packet MUST all be set to zero in this version of the protocol.  These bits could be used for extensions in future versions.</p>
+<p id="rfc.section.4.5.p.1">The final required four bits of SPUD packet MUST all be set to zero in this version of the protocol.  Implementors of this version of the protocol MUST ignore these bits.</p>
+<p id="rfc.section.4.5.p.2">The reseved bits could be used for extensions in future versions.</p>
 <h1 id="rfc.section.4.6"><a href="#rfc.section.4.6">4.6.</a> <a href="#additional-information" id="additional-information">Additional information</a></h1>
 <p id="rfc.section.4.6.p.1">The information after the SPUD header (if it exists) is a CBOR <a href="#RFC7049">[RFC7049]</a> map (major type 5). Each key in the map may be an integer (major type 0 or 1) or a text string (major type 3).  Integer keys are reserved for standardized protocols, with a registry defining their meaning.  This convention can save several bytes per packet, since small integers only take a single byte in the CBOR encoding, and a single-character string takes at least two bytes (more when useful-length strings are used).</p>
 <p id="rfc.section.4.6.p.2">The only integer keys reserved by this version of the document are:</p>
@@ -595,9 +597,9 @@
   <dd style="margin-left: 8">Application Data. Any CBOR data type, used as application-specific data.  Often this will be a byte string (major type 2), particularly for protocols that encrypt data.</dd>
 </dl>
 <p id="rfc.section.4.6.p.4">The 0 key MUST NOT be used when the adec or pdec bit is set.  Path elements MUST NOT inspect or modify the contents of the 0 key.</p>
-<p id="rfc.section.4.6.p.5">The overhead for always using CBOR is therefore effectively three or more bytes: 0xA1 (map with one element), 0x00 (integer 0 as the key), and 0x41 (byte string containing one byte).  [EDITOR&#8217;S NOTE: It may be that the simplicity and extensibility of this approach is worth the three bytes of overhead.]  </p>
+<p id="rfc.section.4.6.p.5">The overhead for always using CBOR is therefore effectively three or more bytes: 0xA1 (map with one element), 0x00 (integer 0 as the key), and 0x41 (byte string containing one byte).  [EDITOR&#8217;S NOTE: It may be that the simplicity and extensibility of this approach is worth the three bytes of overhead.]</p>
 <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#initiating-a-tube" id="initiating-a-tube">Initiating a tube</a></h1>
-<p id="rfc.section.5.p.1">To begin a tube, the initiator sends a SPUD packet with the &#8220;open&#8221; command (bits 01).  </p>
+<p id="rfc.section.5.p.1">To begin a tube, the initiator sends a SPUD packet with the &#8220;open&#8221; command (bits 01).</p>
 <p id="rfc.section.5.p.2">Future versions of this specification may contain CBOR in the open packet.  One example might be requesting proof of implementation from the receiving endpoint,</p>
 <h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#acknowledging-tube-creation" id="acknowledging-tube-creation">Acknowledging tube creation</a></h1>
 <p id="rfc.section.6.p.1">To acknowledge the creation of a tube, the responder sends a SPUD packet with the &#8220;ack&#8221; command (bits 11).  The current thought is that the security provided by the TCP three-way handshake would be left to transport protocols inside of SPUD.  Further exploration of this prototype will help decide how much of this handshake needs to be made visible to path elements that <em>only</em> process SPUD.</p>
@@ -623,7 +625,7 @@
 <dl>
   <dt>&#8220;ipaddr&#8221; (byte string, major type 2)</dt>
   <dd style="margin-left: 8">the IPv4 address or IPv6 address of the sender, as a string of 4 or 16 bytes in network order. This is necessary as the source IP address of the packet is spoofed</dd>
-  <dt>&#8220;cookie&#8221; (byte string, major type 2)</dt>
+  <dt>&#8220;token&#8221; (byte string, major type 2)</dt>
   <dd style="margin-left: 8">data that identifies the sending path element unambiguously</dd>
   <dt>&#8220;url&#8221; (text string, major type 3)</dt>
   <dd style="margin-left: 8">a URL identifying some information about the path or its relationship with the tube. The URL represents some path condition, and retrieval of content at the URL should include a human-readable description.</dd>
@@ -646,7 +648,7 @@
 </dl>
 <p id="rfc.section.8.1.p.3">Other information from particular ICMP codes may be parsed out into key/value pairs.</p>
 <h1 id="rfc.section.8.2"><a href="#rfc.section.8.2">8.2.</a> <a href="#address-translation" id="address-translation">Address translation</a></h1>
-<p id="rfc.section.8.2.p.1">SPUD-aware path elements that perform Network Address Translation MUST send a path declaration describing the translation that was done, using the following key/value pairs:</p>
+<p id="rfc.section.8.2.p.1">SPUD-aware path elements that perform Network Address Translation MUST send a path declaration describing the translation that was done, only to the endpoint whose address was translated (the &#8220;internal&#8221; side in a typical NAT deployment).  It uses the following key/value pairs:</p>
 <p/>
 
 <dl>
@@ -709,7 +711,7 @@
   <dd style="margin-left: 8">the latency (in microseconds)</dd>
 </dl>
 <h1 id="rfc.section.8.8"><a href="#rfc.section.8.8">8.8.</a> <a href="#prohibition-report" id="prohibition-report">Prohibition Report</a></h1>
-<p id="rfc.section.8.8.p.1">A path element which refuses to forward a packet may declare why the packet was not forwarded, similar to the various Destination Unreachable codes of ICMP.  </p>
+<p id="rfc.section.8.8.p.1">A path element which refuses to forward a packet may declare why the packet was not forwarded, similar to the various Destination Unreachable codes of ICMP.</p>
 <p id="rfc.section.8.8.p.2">[EDITOR&#8217;S NOTE: Further thought will be given to how these reports interact with the ICMP support from <a href="#icmp">Section 8.1</a>.]</p>
 <h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#declaration-reflection" id="declaration-reflection">Declaration reflection</a></h1>
 <p id="rfc.section.9.p.1">In some cases, a device along the path may wish to send a path declaration but may not be able to send packets ont he reverse path.  It may ask the endpoint in the forward direction to reflect a SPUD packet back along the reverse path in this case.</p>
@@ -723,9 +725,9 @@
 <p/>
 
 <ul>
-  <li>cookie (byte string, major type 2): an identifier for this application declaration, used to address a particular path element</li>
+  <li>&#8220;token&#8221; (byte string, major type 2): an identifier for this application declaration, used to address a particular path element</li>
 </ul>
-<p id="rfc.section.10.p.4">Unless the cookie matches one sent by the path element for this tube, every device along the path MUST forward application declarations on towards the destination endpoint.</p>
+<p id="rfc.section.10.p.4">Unless the token matches one sent by the path element for this tube, every device along the path MUST forward application declarations on towards the destination endpoint.</p>
 <p id="rfc.section.10.p.5">The definition of an application declaration vocabulary is left as future work; we note only at this point that the mechanism supports such declarations.</p>
 <h1 id="rfc.section.11"><a href="#rfc.section.11">11.</a> <a href="#cbor-profile" id="cbor-profile">CBOR Profile</a></h1>
 <p id="rfc.section.11.p.1">Moving forward, we will likely specify a subset of CBOR that can be used in SPUD, including the avoidance of floating point numbers, indefinite-length arrays, and indefinite-length maps.  This will allow a significantly less complicated CBOR implementation to be used, which would be particularly nice on constrained devices.</p>
