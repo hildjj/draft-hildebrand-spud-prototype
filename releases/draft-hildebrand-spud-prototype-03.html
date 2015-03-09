@@ -1,0 +1,879 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <title>Substrate Protocol for User Datagrams (SPUD) Prototype</title>
+
+  <style type="text/css" title="Xml2Rfc (sans serif)">
+  /*<![CDATA[*/
+	  a {
+	  text-decoration: none;
+	  }
+      /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+      a.info {
+          /* This is the key. */
+          position: relative;
+          z-index: 24;
+          text-decoration: none;
+      }
+      a.info:hover {
+          z-index: 25;
+          color: #FFF; background-color: #900;
+      }
+      a.info span { display: none; }
+      a.info:hover span.info {
+          /* The span will display just on :hover state. */
+          display: block;
+          position: absolute;
+          font-size: smaller;
+          top: 2em; left: -5em; width: 15em;
+          padding: 2px; border: 1px solid #333;
+          color: #900; background-color: #EEE;
+          text-align: left;
+      }
+	  a.smpl {
+	  color: black;
+	  }
+	  a:hover {
+	  text-decoration: underline;
+	  }
+	  a:active {
+	  text-decoration: underline;
+	  }
+	  address {
+	  margin-top: 1em;
+	  margin-left: 2em;
+	  font-style: normal;
+	  }
+	  body {
+	  color: black;
+	  font-family: verdana, helvetica, arial, sans-serif;
+	  font-size: 10pt;
+	  max-width: 55em;
+	  
+	  }
+	  cite {
+	  font-style: normal;
+	  }
+	  dd {
+	  margin-right: 2em;
+	  }
+	  dl {
+	  margin-left: 2em;
+	  }
+	
+	  ul.empty {
+	  list-style-type: none;
+	  }
+	  ul.empty li {
+	  margin-top: .5em;
+	  }
+	  dl p {
+	  margin-left: 0em;
+	  }
+	  dt {
+	  margin-top: .5em;
+	  }
+	  h1 {
+	  font-size: 14pt;
+	  line-height: 21pt;
+	  page-break-after: avoid;
+	  }
+	  h1.np {
+	  page-break-before: always;
+	  }
+	  h1 a {
+	  color: #333333;
+	  }
+	  h2 {
+	  font-size: 12pt;
+	  line-height: 15pt;
+	  page-break-after: avoid;
+	  }
+	  h3, h4, h5, h6 {
+	  font-size: 10pt;
+	  page-break-after: avoid;
+	  }
+	  h2 a, h3 a, h4 a, h5 a, h6 a {
+	  color: black;
+	  }
+	  img {
+	  margin-left: 3em;
+	  }
+	  li {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol p {
+	  margin-left: 0em;
+	  }
+	  p {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  pre {
+	  margin-left: 3em;
+	  background-color: lightyellow;
+	  padding: .25em;
+	  }
+	  pre.text2 {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f0f0f0;
+	  width: 69em;
+	  }
+	  pre.inline {
+	  background-color: white;
+	  padding: 0em;
+	  }
+	  pre.text {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  width: 69em;
+	  }
+	  pre.drawing {
+	  border-style: solid;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  padding: 2em;
+	  }
+	  table {
+	  margin-left: 2em;
+	  }
+	  table.tt {
+	  vertical-align: top;
+	  }
+	  table.full {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.headers {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.tt td {
+	  vertical-align: top;
+	  }
+	  table.full td {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.tt th {
+	  vertical-align: top;
+	  }
+	  table.full th {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.headers th {
+	  border-style: none none inset none;
+	  border-width: 1px;
+	  }
+	  table.left {
+	  margin-right: auto;
+	  }
+	  table.right {
+	  margin-left: auto;
+	  }
+	  table.center {
+	  margin-left: auto;
+	  margin-right: auto;
+	  }
+	  caption {
+	  caption-side: bottom;
+	  font-weight: bold;
+	  font-size: 9pt;
+	  margin-top: .5em;
+	  }
+	
+	  table.header {
+	  border-spacing: 1px;
+	  width: 95%;
+	  font-size: 10pt;
+	  color: white;
+	  }
+	  td.top {
+	  vertical-align: top;
+	  }
+	  td.topnowrap {
+	  vertical-align: top;
+	  white-space: nowrap; 
+	  }
+	  table.header td {
+	  background-color: gray;
+	  width: 50%;
+	  }
+	  table.header a {
+	  color: white;
+	  }
+	  td.reference {
+	  vertical-align: top;
+	  white-space: nowrap;
+	  padding-right: 1em;
+	  }
+	  thead {
+	  display:table-header-group;
+	  }
+	  ul.toc, ul.toc ul {
+	  list-style: none;
+	  margin-left: 1.5em;
+	  margin-right: 0em;
+	  padding-left: 0em;
+	  }
+	  ul.toc li {
+	  line-height: 150%;
+	  font-weight: bold;
+	  font-size: 10pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  ul.toc li li {
+	  line-height: normal;
+	  font-weight: normal;
+	  font-size: 9pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  li.excluded {
+	  font-size: 0pt;
+	  }
+	  ul p {
+	  margin-left: 0em;
+	  }
+	
+	  .comment {
+	  background-color: yellow;
+	  }
+	  .center {
+	  text-align: center;
+	  }
+	  .error {
+	  color: red;
+	  font-style: italic;
+	  font-weight: bold;
+	  }
+	  .figure {
+	  font-weight: bold;
+	  text-align: center;
+	  font-size: 9pt;
+	  }
+	  .filename {
+	  color: #333333;
+	  font-weight: bold;
+	  font-size: 12pt;
+	  line-height: 21pt;
+	  text-align: center;
+	  }
+	  .fn {
+	  font-weight: bold;
+	  }
+	  .hidden {
+	  display: none;
+	  }
+	  .left {
+	  text-align: left;
+	  }
+	  .right {
+	  text-align: right;
+	  }
+	  .title {
+	  color: #990000;
+	  font-size: 18pt;
+	  line-height: 18pt;
+	  font-weight: bold;
+	  text-align: center;
+	  margin-top: 36pt;
+	  }
+	  .vcardline {
+	  display: block;
+	  }
+	  .warning {
+	  font-size: 14pt;
+	  background-color: yellow;
+	  }
+	
+	
+	  @media print {
+	  .noprint {
+		display: none;
+	  }
+	
+	  a {
+		color: black;
+		text-decoration: none;
+	  }
+	
+	  table.header {
+		width: 90%;
+	  }
+	
+	  td.header {
+		width: 50%;
+		color: black;
+		background-color: white;
+		vertical-align: top;
+		font-size: 12pt;
+	  }
+	
+	  ul.toc a::after {
+		content: leader('.') target-counter(attr(href), page);
+	  }
+	
+	  ul.ind li li a {
+		content: target-counter(attr(href), page);
+	  }
+	
+	  .print2col {
+		column-count: 2;
+		-moz-column-count: 2;
+		column-fill: auto;
+	  }
+	  }
+	
+	  @page {
+	  @top-left {
+		   content: "Internet-Draft"; 
+	  } 
+	  @top-right {
+		   content: "December 2010"; 
+	  } 
+	  @top-center {
+		   content: "Abbreviated Title";
+	  } 
+	  @bottom-left {
+		   content: "Doe"; 
+	  } 
+	  @bottom-center {
+		   content: "Expires June 2011"; 
+	  } 
+	  @bottom-right {
+		   content: "[Page " counter(page) "]"; 
+	  } 
+	  }
+	
+	  @page:first { 
+		@top-left {
+		  content: normal;
+		}
+		@top-right {
+		  content: normal;
+		}
+		@top-center {
+		  content: normal;
+		}
+	  }
+  /*]]>*/
+  </style>
+
+  <link href="#rfc.toc" rel="Contents"/>
+<link href="#rfc.section.1" rel="Chapter" title="1 Introduction"/>
+<link href="#rfc.section.1.1" rel="Chapter" title="1.1 Terminology"/>
+<link href="#rfc.section.2" rel="Chapter" title="2 Requirements, Assumptions and Rationale"/>
+<link href="#rfc.section.3" rel="Chapter" title="3 Lifetime of a tube"/>
+<link href="#rfc.section.4" rel="Chapter" title="4 Packet layout"/>
+<link href="#rfc.section.4.1" rel="Chapter" title="4.1 Detecting usage"/>
+<link href="#rfc.section.4.2" rel="Chapter" title="4.2 TUBE ID"/>
+<link href="#rfc.section.4.3" rel="Chapter" title="4.3 Commands"/>
+<link href="#rfc.section.4.4" rel="Chapter" title="4.4 Declaration bits"/>
+<link href="#rfc.section.4.5" rel="Chapter" title="4.5 Reserved bits"/>
+<link href="#rfc.section.4.6" rel="Chapter" title="4.6 Additional information"/>
+<link href="#rfc.section.5" rel="Chapter" title="5 Initiating a tube"/>
+<link href="#rfc.section.6" rel="Chapter" title="6 Acknowledging tube creation"/>
+<link href="#rfc.section.7" rel="Chapter" title="7 Closing a tube"/>
+<link href="#rfc.section.8" rel="Chapter" title="8 Path declarations"/>
+<link href="#rfc.section.8.1" rel="Chapter" title="8.1 ICMP"/>
+<link href="#rfc.section.8.2" rel="Chapter" title="8.2 Address translation"/>
+<link href="#rfc.section.8.3" rel="Chapter" title="8.3 Tube lifetime"/>
+<link href="#rfc.section.8.4" rel="Chapter" title="8.4 Path element identity"/>
+<link href="#rfc.section.8.5" rel="Chapter" title="8.5 Maximum Datagram Size"/>
+<link href="#rfc.section.8.6" rel="Chapter" title="8.6 Rate Limit"/>
+<link href="#rfc.section.8.7" rel="Chapter" title="8.7 Latency Advisory"/>
+<link href="#rfc.section.8.8" rel="Chapter" title="8.8 Prohibition Report"/>
+<link href="#rfc.section.9" rel="Chapter" title="9 Declaration reflection"/>
+<link href="#rfc.section.10" rel="Chapter" title="10 Application declarations"/>
+<link href="#rfc.section.11" rel="Chapter" title="11 CBOR Profile"/>
+<link href="#rfc.section.12" rel="Chapter" title="12 Security Considerations"/>
+<link href="#rfc.section.13" rel="Chapter" title="13 IANA Considerations"/>
+<link href="#rfc.section.14" rel="Chapter" title="14 Acknowledgements"/>
+<link href="#rfc.references" rel="Chapter" title="15 References"/>
+<link href="#rfc.references.1" rel="Chapter" title="15.1 Normative References"/>
+<link href="#rfc.references.2" rel="Chapter" title="15.2 Informative References"/>
+<link href="#rfc.authors" rel="Chapter"/>
+
+
+  <meta name="generator" content="xml2rfc version 2.4.8 - http://tools.ietf.org/tools/xml2rfc" />
+  <link rel="schema.dct" href="http://purl.org/dc/terms/" />
+
+  <meta name="dct.creator" content="Hildebrand, J. and B. Trammell" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-hildebrand-spud-prototype-03" />
+  <meta name="dct.issued" scheme="ISO8601" content="2015-3-09" />
+  <meta name="dct.abstract" content="SPUD is a prototype for grouping UDP packets together in a &#8220;tube&#8221;, also allowing network devices on the path between endpoints to participate explicitly in the tube outside the end-to-end context." />
+  <meta name="description" content="SPUD is a prototype for grouping UDP packets together in a &#8220;tube&#8221;, also allowing network devices on the path between endpoints to participate explicitly in the tube outside the end-to-end context." />
+
+</head>
+
+<body>
+
+  <table class="header">
+    <tbody>
+    
+    	<tr>
+  <td class="left">Network Working Group</td>
+  <td class="right">J. Hildebrand</td>
+</tr>
+<tr>
+  <td class="left">Internet-Draft</td>
+  <td class="right">Cisco Systems</td>
+</tr>
+<tr>
+  <td class="left">Intended status: Informational</td>
+  <td class="right">B. Trammell</td>
+</tr>
+<tr>
+  <td class="left">Expires: September 10, 2015</td>
+  <td class="right">ETH Zurich</td>
+</tr>
+<tr>
+  <td class="left"></td>
+  <td class="right">March 09, 2015</td>
+</tr>
+
+    	
+    </tbody>
+  </table>
+
+  <p class="title">Substrate Protocol for User Datagrams (SPUD) Prototype<br />
+  <span class="filename">draft-hildebrand-spud-prototype-03</span></p>
+  
+  <h1 id="rfc.abstract">
+  <a href="#rfc.abstract">Abstract</a>
+</h1>
+<p>SPUD is a prototype for grouping UDP packets together in a &#8220;tube&#8221;, also allowing network devices on the path between endpoints to participate explicitly in the tube outside the end-to-end context.</p>
+<h1 id="rfc.status">
+  <a href="#rfc.status">Status of This Memo</a>
+</h1>
+<p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
+<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
+<p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
+<p>This Internet-Draft will expire on September 10, 2015.</p>
+<h1 id="rfc.copyrightnotice">
+  <a href="#rfc.copyrightnotice">Copyright Notice</a>
+</h1>
+<p>Copyright (c) 2015 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (http://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
+<h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a></h1>
+<p id="rfc.section.1.p.1">The goal of SPUD (Substrate Protocol for User Datagrams) is to provide a mechanism for grouping UDP packets together into a &#8220;tube&#8221; with a defined beginning and end in time.  Devices on the network path between the endpoints speaking SPUD may communicate explicitly with the endpoints outside the context of the end-to-end conversation.</p>
+<p id="rfc.section.1.p.2">The SPUD protocol is a prototype, intended to promote further discussion of potential use cases within the framework of a concrete approach.  To move forward, ideas explored in this protocol might be implemented inside another protocol such as DTLS.</p>
+<h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#terminology" id="terminology">Terminology</a></h1>
+<p id="rfc.section.1.1.p.1">In this document, the key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; are to be interpreted as described in BCP 14, RFC 2119 <a href="#RFC2119">[RFC2119]</a>.</p>
+<h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#requirements-assumptions-and-rationale" id="requirements-assumptions-and-rationale">Requirements, Assumptions and Rationale</a></h1>
+<p id="rfc.section.2.p.1">The prototype described in this document is designed to provide an encapsulation for transport protocols which allows minimal and selective exposure of transport semantics, and other transport- and higher-layer information; and explicit discovery of selected information about devices along the path by the transport and higher layers.</p>
+<p id="rfc.section.2.p.2">The encryption of transport- and higher-layer content encapsulated within SPUD is not mandatory; however, the eventual intention is that explicit communication between endpoints and the path can largely replace the implicit endpoint-to-path communication presently derived by middleboxes through deep packet inspection (DPI).</p>
+<p id="rfc.section.2.p.3">SPUD is not a transport protocol; rather, we envision it as the lowest layer of a &#8220;transport construction kit&#8221;. Using SPUD as a common encapsulation, such that new transports have a common appearance to middleboxes, applications, platforms, and operating systems can provide a variety of transport protocols or transport protocol modules. This construction kit is out of scope for this prototype, and left to future work, though we note it could be an alternate implementation of an eventual TAPS interface.</p>
+<p id="rfc.section.2.p.4">The design is based on the following requirements and assumptions:</p>
+<p/>
+
+<ul>
+  <li>SPUD must enable multiple new transport semantics without requiring updates to SPUD implementations in middleboxes.</li>
+  <li>Transport semantics and many properties of communication that endpoints may want to expose to middleboxes are bound to flows or groups of flows. SPUD must therefore provide a basic facility for associating packets together (into what we call a &#8220;tube&#8221; for lack of a better term).</li>
+  <li>SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or &#8220;jailbreak&#8221;) on the endpoints. Eventually, we envision that SPUD will be implemented in operating system kernels as part of the IP stack. However, we also assume that there will be a (very) long transition to this state, and SPUD must be useful and deployable during this transition. In addition, userspace implementations of SPUD can be used for rapid deployment of SPUD itself and new transport protocols over SPUD, e.g. in web browsers.</li>
+  <li>SPUD must operate in the present Internet. In order to ensure deployment, it must also be useful as an encapsulation between endpoints even before the deployment of middleboxes that understand it.</li>
+  <li>SPUD must be low-overhead, specifically requiring very little effort to recognize that a packet is a SPUD packet and to determine the tube it is associated with.</li>
+  <li>SPUD must impose minimal restrictions on the transport protocols it encapsulates.  SPUD must work in multipath, multicast, and mobile environments.</li>
+  <li>SPUD must provide incentives for development and deployment by multiple communities.  These communities and incentives will be defined through the prototyping process.</li>
+</ul>
+<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#lifetime-of-a-tube" id="lifetime-of-a-tube">Lifetime of a tube</a></h1>
+<p id="rfc.section.3.p.1">A tube is a grouping of packets between two endpoints on the network.  Tubes are started by the &#8220;initiator&#8221; expressing an interest in comminicating with the &#8220;responder&#8221;.  A tube may be closed by either endpoint.</p>
+<p id="rfc.section.3.p.2">A tube may be in one of the following states:</p>
+<p/>
+
+<dl>
+  <dt>unknown</dt>
+  <dd style="margin-left: 8">no information is currently known about the tube.  All tubes implicitly start in the unknown state.</dd>
+  <dt>opening</dt>
+  <dd style="margin-left: 8">the initiator has requested a tube that the responder has not yet acknowledged.</dd>
+  <dt>running</dt>
+  <dd style="margin-left: 8">the tube is set up and will allow data to flow</dd>
+  <dt>resuming</dt>
+  <dd style="margin-left: 8">an out-of-sequence SPUD packet has been received for this tube.  Policy will need to be developed describing how (or if) this state can be exploited for quicker tube resumption by higher-level protocols.</dd>
+</dl>
+<p id="rfc.section.3.p.4">This leads to the following state transitions (see <a href="#commands">Section 4.3</a> for details on the commands that cause transitions):</p>
+<div id="rfc.figure.1"/>
+<div id="states"/>
+<pre>
++---------------------+ +-----+
+|                     | |close|
+|                     v |     v
+|        +---sopen--- +-------+ &lt;--close----+
+|        |            |unknown|             |
+|        |    +-----&gt; +-------+ -ack,--+    |
+|        |    |            \     data  |    |
+|        |  close         open         |    |
+|        v    |              \         v    |
+|       +-------+ ------data-------&gt; +--------+
+| +-----|opening|              )     |resuming|----+
+| |     +-------+ &lt;-----open-------- +--------+    |
+| |       ^   |              /         |    ^      |
+| |       |   |             v          |    |      |
+| +-sopen-+   +-ack-&gt; +-------+ &lt;-ack,-+    +-data-+
+|                     |running|   open
++---------close------ +-------+
+                        ^    |
+                        |    | open,ack,data
+                        +----+
+</pre>
+<p class="figure">Figure 1: State transitions</p>
+<p id="rfc.section.3.p.5">All of the state transitions happen when a command is received, except for the &#8220;sopen&#8221; transition which occurs when an open command is sent.</p>
+<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#packet-layout" id="packet-layout">Packet layout</a></h1>
+<p id="rfc.section.4.p.1">SPUD packets are sent inside UDP packets, with the SPUD header directly after the UDP header.</p>
+<div id="rfc.figure.2"/>
+<div id="packet"/>
+<pre>
+0                   1                   2                   3
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                       magic = 0xd80000d8                      |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                            tube ID                            |
++                                                               +
+|                                                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|cmd|a|p|  resv |           CBOR map...                         |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</pre>
+<p class="figure">Figure 2: SPUD packets</p>
+<p id="rfc.section.4.p.2">The fields in the packet are:</p>
+<p/>
+
+<ul>
+  <li>32-bit constant magic number (see <a href="#magic">Section 4.1</a>)</li>
+  <li>64 bits defining the id of this tube</li>
+  <li>2 bits of command (see <a href="#commands">Section 4.3</a>)</li>
+  <li>1 bit marking this packet as an application declaration (adec)</li>
+  <li>1 bit marking this packet as a path declaration (pdec)</li>
+  <li>4 reserved bits that MUST be set to 0 for this version of the protocol</li>
+  <li>If more bytes are present, they contain a CBOR map</li>
+</ul>
+<h1 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1.</a> <a href="#magic" id="magic">Detecting usage</a></h1>
+<p id="rfc.section.4.1.p.1">The first 32 bits of every SPUD packet is the constant bit pattern d80000d8 (hex), or 1101 1000 0000 0000 1101 1000 (binary).  This pattern was selected to be invalid UTF-8, UTF-16 (both big- and little-endian), and UTF-32 (both big- and little-endian).  The intent is to ensure that text-based non-SPUD protocols would not use this pattern by mistake.  A survey of other protocols will be done to see if this pattern occurs often in existing traffic.</p>
+<p id="rfc.section.4.1.p.2">The intent of this magic number is not to provide conclusive evidence that SPUD is being used in this packet, but instead to allow a very fast (i.e., trivially implementable in hardware) way to decide that SPUD is not in use on packets that do not include the magic number.</p>
+<h1 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a> <a href="#tube-id" id="tube-id">TUBE ID</a></h1>
+<p id="rfc.section.4.2.p.1">The 64-bit tube ID uniquely identifies a given tube.  All commands (see <a href="#commands">Section 4.3</a>) are scoped to a single tube.</p>
+<p id="rfc.section.4.2.p.2">[EDITOR&#8217;S NOTE: Does a Tube ID have to be bound to a single source address or not?  This would be for mobility, not multipath.]</p>
+<h1 id="rfc.section.4.3"><a href="#rfc.section.4.3">4.3.</a> <a href="#commands" id="commands">Commands</a></h1>
+<p id="rfc.section.4.3.p.1">The next 2 bits of a SPUD packet encode a command:</p>
+<p/>
+
+<dl>
+  <dt>Data (00)</dt>
+  <dd style="margin-left: 8">Normal data in a running tube</dd>
+  <dt>Open (01)</dt>
+  <dd style="margin-left: 8">A request to begin a tube</dd>
+  <dt>Close (10)</dt>
+  <dd style="margin-left: 8">A request to end a tube</dd>
+  <dt>Ack (11)</dt>
+  <dd style="margin-left: 8">An acknowledgement to an open request</dd>
+</dl>
+<h1 id="rfc.section.4.4"><a href="#rfc.section.4.4">4.4.</a> <a href="#declaration-bits" id="declaration-bits">Declaration bits</a></h1>
+<p id="rfc.section.4.4.p.1">The adec bit is set when the application is making a declaration to the path.  The pdec bit is set when the path is making a declaration to the application.</p>
+<h1 id="rfc.section.4.5"><a href="#rfc.section.4.5">4.5.</a> <a href="#reserved-bits" id="reserved-bits">Reserved bits</a></h1>
+<p id="rfc.section.4.5.p.1">The final required four bits of SPUD packet MUST all be set to zero in this version of the protocol.  Implementors of this version of the protocol MUST ignore these bits.</p>
+<p id="rfc.section.4.5.p.2">The reseved bits could be used for extensions in future versions.</p>
+<h1 id="rfc.section.4.6"><a href="#rfc.section.4.6">4.6.</a> <a href="#additional-information" id="additional-information">Additional information</a></h1>
+<p id="rfc.section.4.6.p.1">The information after the SPUD header (if it exists) is a CBOR <a href="#RFC7049">[RFC7049]</a> map (major type 5). Each key in the map may be an integer (major type 0 or 1) or a text string (major type 3).  Integer keys are reserved for standardized protocols, with a registry defining their meaning.  This convention can save several bytes per packet, since small integers only take a single byte in the CBOR encoding, and a single-character string takes at least two bytes (more when useful-length strings are used).</p>
+<p id="rfc.section.4.6.p.2">The only integer keys reserved by this version of the document are:</p>
+<p/>
+
+<dl>
+  <dt>0 (anything)</dt>
+  <dd style="margin-left: 8">Application Data. Any CBOR data type, used as application-specific data.  Often this will be a byte string (major type 2), particularly for protocols that encrypt data.</dd>
+</dl>
+<p id="rfc.section.4.6.p.4">The 0 key MUST NOT be used when the adec or pdec bit is set.  Path elements MUST NOT inspect or modify the contents of the 0 key.</p>
+<p id="rfc.section.4.6.p.5">The overhead for always using CBOR is therefore effectively three or more bytes: 0xA1 (map with one element), 0x00 (integer 0 as the key), and 0x41 (byte string containing one byte).  [EDITOR&#8217;S NOTE: It may be that the simplicity and extensibility of this approach is worth the three bytes of overhead.]</p>
+<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#initiating-a-tube" id="initiating-a-tube">Initiating a tube</a></h1>
+<p id="rfc.section.5.p.1">To begin a tube, the initiator sends a SPUD packet with the &#8220;open&#8221; command (bits 01).</p>
+<p id="rfc.section.5.p.2">Future versions of this specification may contain CBOR in the open packet.  One example might be requesting proof of implementation from the receiving endpoint,</p>
+<h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#acknowledging-tube-creation" id="acknowledging-tube-creation">Acknowledging tube creation</a></h1>
+<p id="rfc.section.6.p.1">To acknowledge the creation of a tube, the responder sends a SPUD packet with the &#8220;ack&#8221; command (bits 11).  The current thought is that the security provided by the TCP three-way handshake would be left to transport protocols inside of SPUD.  Further exploration of this prototype will help decide how much of this handshake needs to be made visible to path elements that <em>only</em> process SPUD.</p>
+<p id="rfc.section.6.p.2">Future versions of this specification may contain CBOR in the ack packet.  One example might be answering an implementation proof request from the initiator.</p>
+<h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#closing-a-tube" id="closing-a-tube">Closing a tube</a></h1>
+<p id="rfc.section.7.p.1">To close a tube, either side sends a packet with the &#8220;close&#8221; command (bits 10).  Whenever a path element sees a close packet for a tube, it MAY drop all stored state for that tube.  Further exploration of this prototype will determine when close packets are sent, what CBOR they contain, and how they interact with transport protocols inside of SPUD.</p>
+<p id="rfc.section.7.p.2">What is likely at this time is that SPUD close packets MAY contain error information in the following CBOR keys (and associated values):</p>
+<p/>
+
+<dl>
+  <dt>&#8220;error&#8221; (map, major type 5)</dt>
+  <dd style="margin-left: 8">a map from text string (major type 3) to text string.  The keys are <a href="#RFC5646">[RFC5646]</a> language tags, and the values are strings that can be presented to a user that understands that language.  The key &#8220;*&#8221; can be used as the default.</dd>
+  <dt>&#8220;url&#8221; (text string, major type 3)</dt>
+  <dd style="margin-left: 8">a URL identifying some information about the path or its relationship with the tube. The URL represents some path condition, and retrieval of content at the URL should include a human-readable description.</dd>
+</dl>
+<h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#path-declarations" id="path-declarations">Path declarations</a></h1>
+<p id="rfc.section.8.p.1">SPUD can be used for path declarations: information delivered to the endpoints from devices along the path. Path declarations can be thought of as enhanced ICMP for transports using SPUD, allowing information about the condition or state of the path or the tube to be communicated directly to a sender.</p>
+<p id="rfc.section.8.p.2">Path declarations may be sent in either direction (toward the initiator or responder) at any time.  The scope of a path declaration is the tube (identified by tube ID) to which it is associated. Devices along the path cannot make declarations to endpoints without a tube to associate them with.  Path declarations are sent to one endpoint in a SPUD conversation by the path device sending SPUD packets with the source IP address and UDP port from the other endpoint in the conversation.  These &#8220;spoofed&#8221; packets  are required to allow existing network elements that pass traffic for a given 5-tuple to continue to work.  To ensure that the context for these declarations is correct, path declaration packets MUST have the pdec bit set.  Path declarations MUST use the &#8220;data&#8221; command (bits 00).</p>
+<p id="rfc.section.8.p.3">Path declarations do not imply specific required actions on the part of receivers.  Any path declaration MAY be ignored by a receiving application.  When using a path declaration as input to an algorithm, the application will make decisions about the trustworthiness of the declaration before using the data in the declaration.</p>
+<p id="rfc.section.8.p.4">The data associated with a path declaration may always have the following keys (and associated values), regardless of what other information is included:</p>
+<p/>
+
+<dl>
+  <dt>&#8220;ipaddr&#8221; (byte string, major type 2)</dt>
+  <dd style="margin-left: 8">the IPv4 address or IPv6 address of the sender, as a string of 4 or 16 bytes in network order. This is necessary as the source IP address of the packet is spoofed</dd>
+  <dt>&#8220;token&#8221; (byte string, major type 2)</dt>
+  <dd style="margin-left: 8">data that identifies the sending path element unambiguously</dd>
+  <dt>&#8220;url&#8221; (text string, major type 3)</dt>
+  <dd style="margin-left: 8">a URL identifying some information about the path or its relationship with the tube. The URL represents some path condition, and retrieval of content at the URL should include a human-readable description.</dd>
+  <dt>&#8220;warning&#8221; (map, major type 5)</dt>
+  <dd style="margin-left: 8">a map from text string (major type 3) to text string.  The keys are <a href="#RFC5646">[RFC5646]</a> language tags, and the values are strings that can be presented to a user that understands that language.  The key &#8220;*&#8221; can be used as the default.</dd>
+</dl>
+<p id="rfc.section.8.p.6">The SPUD mechanism is defined to be completely extensible in terms of the types of path declarations that can be made. However, in order for this mechanism to be of use, endpoints and devices along the path must share a relatively limited vocabulary of path declarations. The following subsections briefly explore declarations we believe may be useful, and which will be further developed on the background of concrete use cases to be defined as part of the SPUD effort.</p>
+<p id="rfc.section.8.p.7">Terms in this vocabulary considered universally useful may be added to the SPUD path declaration map keys, which in this case would then be defined as an IANA registry.</p>
+<h1 id="rfc.section.8.1"><a href="#rfc.section.8.1">8.1.</a> <a href="#icmp" id="icmp">ICMP</a></h1>
+<p id="rfc.section.8.1.p.1">ICMP <a href="#RFC4443">[RFC4443]</a> (e.g.) messages are sometimes blocked by path elements attempting to provide  security.  Even when they are delivered to the host, many ICMP messages are not  made available to applications through portable socket interfaces.  As such, a path element might decide to copy the ICMP message into a path declaration, using the following key/value pairs:</p>
+<p/>
+
+<dl>
+  <dt>&#8220;icmp&#8221; (byte string, major type 2)</dt>
+  <dd style="margin-left: 8">the full ICMP payload. This is  intended to allow ICMP messages (which may be blocked by the path, or not made available to the receiving application) to be bound to a tube. Note that sending a path declaration ICMP message is not a substitute for sending a required ICMP or ICMPv6 message.</dd>
+  <dt>&#8220;icmp-type&#8221; (unsigned, major type 0)</dt>
+  <dd style="margin-left: 8">the ICMP type</dd>
+  <dt>&#8220;icmp-code&#8221; (unsigned, major type 0)</dt>
+  <dd style="margin-left: 8">the ICMP code</dd>
+</dl>
+<p id="rfc.section.8.1.p.3">Other information from particular ICMP codes may be parsed out into key/value pairs.</p>
+<h1 id="rfc.section.8.2"><a href="#rfc.section.8.2">8.2.</a> <a href="#address-translation" id="address-translation">Address translation</a></h1>
+<p id="rfc.section.8.2.p.1">SPUD-aware path elements that perform Network Address Translation MUST send a path declaration describing the translation that was done, only to the endpoint whose address was translated (the &#8220;internal&#8221; side in a typical NAT deployment).  It uses the following key/value pairs:</p>
+<p/>
+
+<dl>
+  <dt>&#8220;translated-external-address&#8221; (byte string, major type 2)</dt>
+  <dd style="margin-left: 8">The translated external IPv4 address or IPv6 address for this endpoint, as a string of 4 or 16 bytes in network order</dd>
+  <dt>&#8220;translated-external-port&#8221; (unsigned, major type 0)</dt>
+  <dd style="margin-left: 8">The translated external UDP port number for this endpoint</dd>
+  <dt>&#8220;internal-address&#8221; (byte string, major type 2)</dt>
+  <dd style="margin-left: 8">The pre-translation (internal) IPv4 address or IPv6 address for this endpoint, as a string of 4 or 16 bytes in network order</dd>
+  <dt>&#8220;internal-port&#8221; (unsigned, major type 0)</dt>
+  <dd style="margin-left: 8">The pre-translation (internal) UDP port number for this endpoint</dd>
+</dl>
+<p id="rfc.section.8.2.p.3">The internal addresses are useful when multiple address translations take place on the same path.</p>
+<h1 id="rfc.section.8.3"><a href="#rfc.section.8.3">8.3.</a> <a href="#tube-lifetime" id="tube-lifetime">Tube lifetime</a></h1>
+<p id="rfc.section.8.3.p.1">SPUD-aware path elements that are maintaining state MAY drop state using inactivity timers, however if they use a timer they MUST send a path declaration in both directions with the length of that timer, using the following key/value pairs:</p>
+<p/>
+
+<dl>
+  <dt>&#8220;inactivity-timer&#8221; (unsigned, major type 0)</dt>
+  <dd style="margin-left: 8">The length of the inactivity timer (in microseconds).  A value of 0 means no timeout is being enforced by this path element, which might be useful if the timeout changes over the lifetime of a tube.</dd>
+</dl>
+<h1 id="rfc.section.8.4"><a href="#rfc.section.8.4">8.4.</a> <a href="#path-element-identity" id="path-element-identity">Path element identity</a></h1>
+<p id="rfc.section.8.4.p.1">Path elements can describe themselves using the following key/value pairs:</p>
+<p/>
+
+<dl>
+  <dt>&#8220;description&#8221; (text string, major type 3)</dt>
+  <dd style="margin-left: 8">the name of the software, hardware, product, etc. that generated the declaration</dd>
+  <dt>&#8220;version&#8221; (text string, major type 3)</dt>
+  <dd style="margin-left: 8">the version of the software, hardware, product, etc. that generated the declaration</dd>
+  <dt>&#8220;caps&#8221; (byte string, major type 2)</dt>
+  <dd style="margin-left: 8">a hash of the capabilities of the software, hardware, product, etc. that generated the declaration [TO BE DESCRIBED]</dd>
+  <dt>&#8220;ttl&#8221; (unisigned integer, major type 0)</dt>
+  <dd style="margin-left: 8">IP time to live / IPv6 Hop Limit of associated device [EDITOR&#8217;S NOTE: more detail is required on how this is calculated]</dd>
+</dl>
+<h1 id="rfc.section.8.5"><a href="#rfc.section.8.5">8.5.</a> <a href="#maximum-datagram-size" id="maximum-datagram-size">Maximum Datagram Size</a></h1>
+<p id="rfc.section.8.5.p.1">A path element may tell the endpoint the maximum size of a datagram it is willing or able to forward for a tube, to augment various path MTU discovery mechanisms.  This declaration uses the following key/value pairs:</p>
+<p/>
+
+<dl>
+  <dt>&#8220;mtu&#8221; (unsigned, major type 0)</dt>
+  <dd style="margin-left: 8">the maximum transmission unit (in bytes)</dd>
+</dl>
+<h1 id="rfc.section.8.6"><a href="#rfc.section.8.6">8.6.</a> <a href="#rate-limit" id="rate-limit">Rate Limit</a></h1>
+<p id="rfc.section.8.6.p.1">A path element may tell the endpoint the maximum data rate (in octets or packets) that it is willing or able to forward for a tube. As all path declarations are advisory, the device along the path must not rely on the endpoint to set its sending rate at or below the declared rate limit, and reduction of rate is not a guarantee to the endpoint of zero queueing delay.  This mechanism is intended for &#8220;gross&#8221; rate limitation, i.e. to declare that the output interface is connected to a limited or congested link, not as a substitute for loss-based or explicit congestion notification on the RTT timescale.  This declaration uses the following key/value pairs:</p>
+<p/>
+
+<dl>
+  <dt>&#8220;max-byte-rate&#8221; (unsigned, major type 0)</dt>
+  <dd style="margin-left: 8">the maximum bandwidth (in bytes per second)</dd>
+  <dt>&#8220;max-packet-rate&#8221; (unsigned, major type 0)</dt>
+  <dd style="margin-left: 8">the maximum bandwidth (in packets per second)</dd>
+</dl>
+<h1 id="rfc.section.8.7"><a href="#rfc.section.8.7">8.7.</a> <a href="#latency-advisory" id="latency-advisory">Latency Advisory</a></h1>
+<p id="rfc.section.8.7.p.1">A path element may tell the endpoint the latency attributable to traversing that path element. This mechanism is intended for &#8220;gross&#8221; latency advisories, for instance to declare the output interface is connected to a satellite or <a href="#RFC1149">[RFC1149]</a> link.  This declaration uses the following key/value pairs:</p>
+<p/>
+
+<dl>
+  <dt>&#8220;latency&#8221; (unsigned, major type 0)</dt>
+  <dd style="margin-left: 8">the latency (in microseconds)</dd>
+</dl>
+<h1 id="rfc.section.8.8"><a href="#rfc.section.8.8">8.8.</a> <a href="#prohibition-report" id="prohibition-report">Prohibition Report</a></h1>
+<p id="rfc.section.8.8.p.1">A path element which refuses to forward a packet may declare why the packet was not forwarded, similar to the various Destination Unreachable codes of ICMP.</p>
+<p id="rfc.section.8.8.p.2">[EDITOR&#8217;S NOTE: Further thought will be given to how these reports interact with the ICMP support from <a href="#icmp">Section 8.1</a>.]</p>
+<h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#declaration-reflection" id="declaration-reflection">Declaration reflection</a></h1>
+<p id="rfc.section.9.p.1">In some cases, a device along the path may wish to send a path declaration but may not be able to send packets ont he reverse path.  It may ask the endpoint in the forward direction to reflect a SPUD packet back along the reverse path in this case.</p>
+<p id="rfc.section.9.p.2">[EDITOR&#8217;S NOTE: Bob Briscoe raised this issue during the SEMI workshop, which has largely to do with tunnels. It is not clear to the authors yet how a point along the path would know that it must reflect a declaration, but this approach is included for completeness.]</p>
+<p id="rfc.section.9.p.3">A reflected declaration is a SPUD packet with both the pdec and adec flags set, and contains the same content as a path declaration would. However the packet has the same source address and port and destination address and port as the SPUD packet which triggered it.</p>
+<p id="rfc.section.9.p.4">When a SPUD endpoint receives a declaration reflection, it SHOULD reflect it: swapping the source and destination addresses IP addresses and ports.  The reflecting endpoint MUST unset the adec bit, sending the packet it as if it were a path declaration.</p>
+<p id="rfc.section.9.p.5">[EDITOR&#8217;s NOTE: this facility will need careful security analysis before it makes it into any final specification.]</p>
+<h1 id="rfc.section.10"><a href="#rfc.section.10">10.</a> <a href="#application-declarations" id="application-declarations">Application declarations</a></h1>
+<p id="rfc.section.10.p.1">Applications may also use the SPUD mechanism to describe the traffic in the tube to the application on the other side, and/or to any point along the path. As with path declarations, the scope of an application declaration is the tube (identified by tube ID) to which it is associated.</p>
+<p id="rfc.section.10.p.2">An application declaration is a SPUD packet with the adec flag set, and contains an application declaration formatted in CBOR in its payload. As with path declarations, an application declaration is a CBOR map, which may always have the following keys:</p>
+<p/>
+
+<ul>
+  <li>&#8220;token&#8221; (byte string, major type 2): an identifier for this application declaration, used to address a particular path element</li>
+</ul>
+<p id="rfc.section.10.p.4">Unless the token matches one sent by the path element for this tube, every device along the path MUST forward application declarations on towards the destination endpoint.</p>
+<p id="rfc.section.10.p.5">The definition of an application declaration vocabulary is left as future work; we note only at this point that the mechanism supports such declarations.</p>
+<h1 id="rfc.section.11"><a href="#rfc.section.11">11.</a> <a href="#cbor-profile" id="cbor-profile">CBOR Profile</a></h1>
+<p id="rfc.section.11.p.1">Moving forward, we will likely specify a subset of CBOR that can be used in SPUD, including the avoidance of floating point numbers, indefinite-length arrays, and indefinite-length maps.  This will allow a significantly less complicated CBOR implementation to be used, which would be particularly nice on constrained devices.</p>
+<h1 id="rfc.section.12"><a href="#rfc.section.12">12.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
+<p id="rfc.section.12.p.1">This gives endpoints the ability to expose information about conversations to elements on path.  As such, there are going to be very strict security requirements about what can be exposed, how it can be exposed, etc.  This prototype DOES NOT tackle these issues yet.</p>
+<p id="rfc.section.12.p.2">The goal is to ensure that this layer is better than TCP from a security perspective.  The prototype is clearly not yet to that point.</p>
+<h1 id="rfc.section.13"><a href="#rfc.section.13">13.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
+<p id="rfc.section.13.p.1">If this protocol progresses beyond prototype in some way, a registry will be needed for well-known CBOR map keys.</p>
+<h1 id="rfc.section.14"><a href="#rfc.section.14">14.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a></h1>
+<p id="rfc.section.14.p.1">Thanks to Ted Hardie for suggesting the change from &#8220;Session&#8221; to &#8220;Substrate&#8221; in the title, and to Joel Halpern for suggesting the change from &#8220;session&#8221; to &#8220;tube&#8221; in the protocol description.</p>
+<h1 id="rfc.references"><a href="#rfc.references">15.</a> References</h1>
+<h1 id="rfc.references.1"><a href="#rfc.references.1">15.1.</a> Normative References</h1>
+<table>
+  <tbody>
+    <tr>
+      <td class="reference">
+        <b id="RFC2119">[RFC2119]</b>
+      </td>
+      <td class="top"><a href="mailto:sob@harvard.edu" title="Harvard University">Bradner, S.</a>, "<a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, March 1997.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC3168">[RFC3168]</b>
+      </td>
+      <td class="top"><a>Ramakrishnan, K.</a>, <a>Floyd, S.</a> and <a>D. Black</a>, "<a href="http://tools.ietf.org/html/rfc3168">The Addition of Explicit Congestion Notification (ECN) to IP</a>", RFC 3168, September 2001.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4443">[RFC4443]</b>
+      </td>
+      <td class="top"><a>Conta, A.</a>, <a>Deering, S.</a> and <a>M. Gupta</a>, "<a href="http://tools.ietf.org/html/rfc4443">Internet Control Message Protocol (ICMPv6) for the Internet Protocol Version 6 (IPv6) Specification</a>", RFC 4443, March 2006.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5646">[RFC5646]</b>
+      </td>
+      <td class="top"><a>Phillips, A.</a> and <a>M. Davis</a>, "<a href="http://tools.ietf.org/html/rfc5646">Tags for Identifying Languages</a>", BCP 47, RFC 5646, September 2009.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7049">[RFC7049]</b>
+      </td>
+      <td class="top"><a>Bormann, C.</a> and <a>P. Hoffman</a>, "<a href="http://tools.ietf.org/html/rfc7049">Concise Binary Object Representation (CBOR)</a>", RFC 7049, October 2013.</td>
+    </tr>
+  </tbody>
+</table>
+<h1 id="rfc.references.2"><a href="#rfc.references.2">15.2.</a> Informative References</h1>
+<table>
+  <tbody>
+    <tr>
+      <td class="reference">
+        <b id="RFC1149">[RFC1149]</b>
+      </td>
+      <td class="top"><a href="mailto:dwaitzman@BBN.COM" title="Bolt Baranek and Newman Systems and Technologies Corporation,  Labs Division">Waitzman, D.</a>, "<a href="http://tools.ietf.org/html/rfc1149">Standard for the transmission of IP datagrams on avian carriers</a>", RFC 1149, April 1990.</td>
+    </tr>
+  </tbody>
+</table>
+<h1 id="rfc.authors">
+  <a href="#rfc.authors">Authors' Addresses</a>
+</h1>
+<div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Joe Hildebrand</span> 
+	  <span class="n hidden">
+		<span class="family-name">Hildebrand</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Cisco Systems</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:jhildebr@cisco.com">jhildebr@cisco.com</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Brian Trammell</span> 
+	  <span class="n hidden">
+		<span class="family-name">Trammell</span>
+	  </span>
+	</span>
+	<span class="org vcardline">ETH Zurich</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:ietf@trammell.ch">ietf@trammell.ch</a></span>
+
+  </address>
+</div>
+  
+  <hr class="noprint" />
+  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
+  <ul class="toc">
+
+  	<li>1.   <a href="#rfc.section.1">Introduction</a></li>
+<li>1.1.   <a href="#rfc.section.1.1">Terminology</a></li>
+<li>2.   <a href="#rfc.section.2">Requirements, Assumptions and Rationale</a></li>
+<li>3.   <a href="#rfc.section.3">Lifetime of a tube</a></li>
+<li>4.   <a href="#rfc.section.4">Packet layout</a></li>
+<li>4.1.   <a href="#rfc.section.4.1">Detecting usage</a></li>
+<li>4.2.   <a href="#rfc.section.4.2">TUBE ID</a></li>
+<li>4.3.   <a href="#rfc.section.4.3">Commands</a></li>
+<li>4.4.   <a href="#rfc.section.4.4">Declaration bits</a></li>
+<li>4.5.   <a href="#rfc.section.4.5">Reserved bits</a></li>
+<li>4.6.   <a href="#rfc.section.4.6">Additional information</a></li>
+<li>5.   <a href="#rfc.section.5">Initiating a tube</a></li>
+<li>6.   <a href="#rfc.section.6">Acknowledging tube creation</a></li>
+<li>7.   <a href="#rfc.section.7">Closing a tube</a></li>
+<li>8.   <a href="#rfc.section.8">Path declarations</a></li>
+<li>8.1.   <a href="#rfc.section.8.1">ICMP</a></li>
+<li>8.2.   <a href="#rfc.section.8.2">Address translation</a></li>
+<li>8.3.   <a href="#rfc.section.8.3">Tube lifetime</a></li>
+<li>8.4.   <a href="#rfc.section.8.4">Path element identity</a></li>
+<li>8.5.   <a href="#rfc.section.8.5">Maximum Datagram Size</a></li>
+<li>8.6.   <a href="#rfc.section.8.6">Rate Limit</a></li>
+<li>8.7.   <a href="#rfc.section.8.7">Latency Advisory</a></li>
+<li>8.8.   <a href="#rfc.section.8.8">Prohibition Report</a></li>
+<li>9.   <a href="#rfc.section.9">Declaration reflection</a></li>
+<li>10.   <a href="#rfc.section.10">Application declarations</a></li>
+<li>11.   <a href="#rfc.section.11">CBOR Profile</a></li>
+<li>12.   <a href="#rfc.section.12">Security Considerations</a></li>
+<li>13.   <a href="#rfc.section.13">IANA Considerations</a></li>
+<li>14.   <a href="#rfc.section.14">Acknowledgements</a></li>
+<li>15.   <a href="#rfc.references">References</a></li>
+<li>15.1.   <a href="#rfc.references.1">Normative References</a></li>
+<li>15.2.   <a href="#rfc.references.2">Informative References</a></li>
+<li><a href="#rfc.authors">Authors' Addresses</a></li>
+
+
+  </ul>
+
+  
+
+</body>
+</html>
